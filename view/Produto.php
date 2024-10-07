@@ -97,6 +97,8 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                         <th>Nome produto</th>
                         <th>Quantidade produto</th>
                         <th>Estado produto</th>
+                        <th>Material utilizado</th>
+                        <th>Quantidade Material</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,11 +109,10 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
     </div>
 </div>
 
-<!-- Modal para editar usuário -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 id="modal-title">Editar Usuário</h2>
+        <h2 id="modal-title">Editar produto</h2>
         <form id="form-editar-usuario">
             <input type="hidden" id="edit-codigo">
             <div>
@@ -126,12 +127,21 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                 <label for="edit-estado">Estado:</label>
                 <input type="text" id="edit-estado" name="edit-status">
             </div>
+
+            <div class="Material-select">
+                <label for="edit-materiais">Materiais:</label>
+                <select id="edit-materiais" name="materiais[]" multiple></select>
+            </div>
+
+            <div id="quantidade-container"></div>
+
             <button id="btn-salvar">Salvar</button>
         </form>
     </div>
 </div>
 
 <script src="../assets/js/Menu_lateral_Home.js"></script>
+<script src="../assets/js/ProdutoSelectMaterial.js"></script>
 <script src="../assets/js/TrazerTodosProdutos.js"></script>
 <script src="../assets/js/AlterarExcluirProduto.js"></script> 
 </body>

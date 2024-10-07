@@ -103,3 +103,8 @@ form button:hover {
 .qtd-material{
     display: flex;
 }
+
+#edit-materiais{
+    width: 50%;
+    padding: 5px;
+}
