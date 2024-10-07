@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap');
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body.menu-expandido .conteudo {
+    margin-left: 300px; /* Ajuste para quando o menu está expandido */
+    width: calc(100% - 300px);
+}
+
+#content{
+    width: calc(100% - 65px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+form{
+    background-color: #24252a;
+    width: 400px;
+    padding: 29px;
+    box-shadow: 0px 3px 10px #464646;
+    border-radius: 10px;
+}
+form h2{
+    margin-bottom: 30px;
+    font-size: 30px;
+    color: #166af1;
+    text-align: center;
+}
+form .box-user{
+    position: relative;
+}
+form .box-user input{
+    width: 100%;
+    padding: 10px 0;
+    outline: none;
+    border: 0;
+    background: transparent;
+    border-bottom: 1px solid #166af1;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+button{
+    background: transparent;
+    border: none;
+    margin: none;
+    padding: 0;
+}
+form .box-user label{
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0;
+    color: #6097f0;
+    font-size: 16px;
+    pointer-events: none;
+    transition: .5s;
+}
+form .box-user input:focus~label,
+form .box-user input:valid~label
+{
+    top: -23px;
+    left: 0;
+    color: #82aef4;
+    font-size: 12px;
+}
+
+.forget{
+    font-size: 12px;
+    color: #6196ed;
+    float: right;
+    text-decoration: none;
+    
+}
+
+.forget:hover{
+    font-size: 12px;
+    color: #166af1;
+    float: right;
+    text-decoration: none;
+    
+}
+.container-button{
+    display: inline-block;
+    padding: 0px 0px 0px 10px;
+}
+
+.btn-cadastrar{
+    background: #166af1;
+    border-radius: 5px;
+    color: #fff;
+    position: relative;
+    display: inline-block;
+    padding: 12px 20px;
+    text-decoration: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-top: 30px;
+    transition: .5s;
+    overflow: hidden;
+    margin-left: 20px;
+}
+
+.btn-cadastrar:hover{
+    color: #24252a;
+}
+.btn{
+    position: relative;
+    display: inline-block;
+    padding: 12px 20px;
+    color: #166af1;
+    text-decoration: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-top: 30px;
+    transition: .5s;
+    overflow: hidden;
+    margin-left: 90%;
+}
+.btn:hover{
+    background: #166af1;
+    border-radius: 5px;
+    color: #fff;
+}
+
