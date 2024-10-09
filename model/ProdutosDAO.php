@@ -14,8 +14,6 @@
         }
 
         public function cadastrarProduto($Produto, $materiais, $id_identificador) {
-            // Caminho do arquivo de log
-            $logFile = 'C:\Users\bruno\OneDrive\Área de Trabalho\Log_Erro_TCC\Log_Erro_TCC.txt';
             
             // Inicia uma transação
             $this->banco->beginTransaction();
@@ -53,9 +51,6 @@
             } catch (Exception $e) {
                 // Reverte a transação em caso de erro
                 $this->banco->rollBack();
-        
-                // Grava a mensagem de erro no log
-                file_put_contents($logFile, date('Y-m-d H:i:s') . " - Erro: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
                 return false;
             }
         }
@@ -128,21 +123,51 @@
         }
         
 
-        public function Atualizar_Produto($codProd, $NomeProd, $qtdProd, $estadoProd){
-
-            $update = $this->banco->prepare("UPDATE produtos SET nomeProd=?, qtdProd=?, estadoProd=? WHERE codProd=?");
-            $editar = array($NomeProd, $qtdProd, $estadoProd, $codProd);
-
-            if($update->execute($editar)){
+        public function Atualizar_Produto($codProd, $NomeProd, $qtdProd, $estadoProd, $materiais) {
+            // Inicia uma transação
+            $this->banco->beginTransaction();
+        
+            try {
+                // Excluir todos os registros do produto com materiais existentes
+                $deleteMateriais = $this->banco->prepare("DELETE FROM produtos WHERE id_identificador = ?");
+                $deleteMateriais->execute(array($codProd));
+        
+                // Inserir novamente o produto com os materiais atualizados
+                $placeholders = [];
+                $values = [];
+        
+                foreach ($materiais as $material) {
+                    $placeholders[] = "(?, ?, ?, ?, ?, ?)";
+                    $values[] = $NomeProd; // nomeProd
+                    $values[] = $qtdProd;  // qtdProd
+                    $values[] = $estadoProd; // estadoProd
+                    $values[] = $material['id_material']; // id_material
+                    $values[] = $material['qtd_material']; // qtd_material
+                    $values[] = $codProd; // id_identificador
+                }
+        
+                if (!empty($placeholders)) {
+                    // Consulta para inserir os novos materiais
+                    $sql = "INSERT INTO produtos (nomeProd, qtdProd, estadoProd, id_material, qtd_material, id_identificador) VALUES " . implode(', ', $placeholders);
+                    $inserir = $this->banco->prepare($sql);
+                    $inserir->execute($values);
+                }
+        
+                // Confirma a transação
+                $this->banco->commit();
                 return true;
+        
+            } catch (Exception $e) {
+                // Reverte a transação em caso de erro
+                $this->banco->rollBack();
+                return false;
             }
-            
-            return false;
         }
+        
 
         public function excluir_produto($codProd){    
 
-            $delete = $this->banco->prepare("DELETE FROM produtos WHERE codProd=?");
+            $delete = $this->banco->prepare("DELETE FROM produtos WHERE id_identificador=?");
             $codigoProduto= array($codProd);
 
             if($delete->execute($codigoProduto)){

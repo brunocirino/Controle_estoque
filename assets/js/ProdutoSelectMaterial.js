@@ -1,26 +1,31 @@
 // Definir a variável materiaisCadastrados como global
-let materiaisCadastrados = [];
+window.materiaisCadastrados = [];
 
 // Função para fazer a requisição AJAX e buscar todos os materiais
-function TrazerTodosMateriais() {
-    $.ajax({
-        url: '../controller/TrazerTodosMateriais.php',
-        method: 'GET',
-        success: function(response) {
-            try {
-                // Parse da resposta para JSON
-                const materiais = JSON.parse(response);
-                console.log('Requisição AJAX bem sucedida:', materiais);
+export function TrazerTodosMateriais() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '../controller/TrazerTodosMateriais.php',
+            method: 'GET',
+            success: function(response) {
+                try {
+                    // Parse da resposta para JSON
+                    const materiais = JSON.parse(response);
+                    console.log('Requisição AJAX bem sucedida:', materiais);
 
-                // Atualizar a lista de materiais cadastrados
-                atualizarMateriaisCadastrados(materiais);
-            } catch (e) {
-                console.error('Erro ao processar a resposta:', e);
+                    // Atualizar a lista de materiais cadastrados
+                    atualizarMateriaisCadastrados(materiais);
+                    resolve(); // Resolve a Promise quando a requisição for bem-sucedida
+                } catch (e) {
+                    console.error('Erro ao processar a resposta:', e);
+                    reject(e); // Rejeita a Promise em caso de erro
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro na requisição AJAX:', error);
+                reject(error); // Rejeita a Promise em caso de erro
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Erro na requisição AJAX:', error);
-        }
+        });
     });
 }
 

@@ -141,8 +141,8 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
 </div>
 
 <script src="../assets/js/Menu_lateral_Home.js"></script>
-<script src="../assets/js/ProdutoSelectMaterial.js"></script>
+<script type="module" src="../assets/js/ProdutoSelectMaterial.js"></script>
 <script src="../assets/js/TrazerTodosProdutos.js"></script>
-<script src="../assets/js/AlterarExcluirProduto.js"></script> 
+<script type="module" src="../assets/js/AlterarExcluirProduto.js"></script> 
 </body>
 </html>
