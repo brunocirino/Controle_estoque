@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit-nome').value = '';
         document.getElementById('edit-quantidade').value = '';
         document.getElementById('edit-estado').value = '';
+        document.getElementById('edit-preco').value = '';
         document.querySelectorAll('.edit-material').forEach(function(select) {
             select.value = '';
         });
@@ -60,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             nomeProd: produto.nomeProd,
                             qtdProd: produto.qtdProd,
                             estadoProd: produto.estadoProd,
+                            preco: produto.preco,
                             materiais_nomes: [produto.materiais_nomes],
                             materiais_ids: [produto.materiais_ids],
                             materiais_qtd: [produto.materiais_qtd],
@@ -77,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-nome').value = produtoFinal.nomeProd;
                     document.getElementById('edit-quantidade').value = produtoFinal.qtdProd;
                     document.getElementById('edit-estado').value = produtoFinal.estadoProd;
+                    document.getElementById('edit-preco').value = produtoFinal.preco;
     
                     // Adiciona os materiais ao select
                     var materiaisSelect = document.getElementById('edit-materiais');
@@ -131,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let nomeProd = document.getElementById('edit-nome').value;
         let qtdProd = document.getElementById('edit-quantidade').value;
         let estadoProd = document.getElementById('edit-estado').value;
+        let preco = document.getElementById('edit-preco').value;
     
         // Captura os materiais selecionados e suas respectivas quantidades
         let materiais = [];  // Array para armazenar os materiais selecionados
@@ -156,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Nome: nomeProd,
                     QtdProd: qtdProd,
                     EstadoProd: estadoProd,
+                    preco: preco,
                     Materiais: JSON.stringify(materiais)
                 },
                 success: function(response) {
@@ -175,6 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Nome: nomeProd,
                     QtdProd: qtdProd,
                     EstadoProd: estadoProd,
+                    preco: preco,
                     Materiais: JSON.stringify(materiais)
                 },
                 success: function(response) {

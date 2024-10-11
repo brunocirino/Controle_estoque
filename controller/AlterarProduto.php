@@ -8,13 +8,14 @@ require_once('../model/ProdutosDAO.php');
     $EstadoProd = $_POST['EstadoProd'];
     $CodMat = $_POST['CodMat'];
     $qtdMat = $_POST['qtdMat'];
+    $preco = $_POST['preco'];
     $Processos = $_POST['Processos'];
 
     $materiais = isset($_POST['Materiais']) ? json_decode($_POST['Materiais'], true) : [];
 
     $AlterarProduto = new ProdutosDAO();
     
-    $AlterarProduto->Atualizar_Produto($CodProd, $NomeProd, $QtdProd, $EstadoProd, $materiais);
+    $AlterarProduto->Atualizar_Produto($CodProd, $NomeProd, $QtdProd, $preco, $EstadoProd, $materiais);
 
     echo '<script type="text/javascript">
         alert("Produto alterado com sucesso");

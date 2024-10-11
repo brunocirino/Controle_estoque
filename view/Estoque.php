@@ -22,6 +22,7 @@
 
     <link rel="stylesheet" href="../assets/css//MenuLateral.css">
     <link rel="stylesheet" href="../assets/css//Estoque.css">
+    <link rel="stylesheet" href="../assets/css/Modal_AlterarExcluirProduto.css">
     <title>Controle de estoque</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -76,7 +77,7 @@
             <!-- Linha para entrada de ID do produto e botões -->
             <div class="cabecalho">
                 <div class="row-input">
-                    <input type="text" class="product-id" placeholder="Digite o ID do produto" required>
+                    <input type="text" class="product-id" placeholder="Digite o ID do produto" required id="product-id">
                 </div>
                 <div class="titulo">
                 <h1>Tabela de produtos</h1>
@@ -92,9 +93,9 @@
                     <thead>
                         <tr>
                             <th>Selecionar</th>
-                            <th>ID</th>
                             <th>Nome</th>
                             <th>Quantidade</th>
+                            <th>Status</th>
                             <th>Preço</th>
                             <!-- Adicione mais cabeçalhos conforme necessário -->
                         </tr>
@@ -108,8 +109,25 @@
         </div>
     </div>
 
+   
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Perda</h2>
+        <form id="form-editar-estoque">
+            <input type="hidden" id="edit-codigo">
+            <div>
+                <label for="edit-quantidade">Quantidade:</label>
+                <input type="text" id="edit-quantidade" name="edit-quantidade">
+            </div>
+
+            <button id="btn-salvar">Salvar</button>
+        </form>
+    </div>
+</div>
+
     <script src="../assets/js/Menu_lateral_Home.js"></script>
-    <script src="../assets/js/TrazerTodosProdutos.js"></script>
-    <script src="../assets/js/SelecionarLinha.js"></script>
+    <script src="../assets/js/TrazerTudoEstoque.js"></script>
+    <script src="../assets/js/Estoque.js"></script>
 </body>
 </html>

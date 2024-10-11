@@ -7,12 +7,13 @@ $CodProd = $_POST['Codigo'];
 $NomeProd = $_POST['Nome'];
 $QtdProd = $_POST['QtdProd'];
 $EstadoProd = $_POST['EstadoProd'];
+$preco = $_POST['preco'];
 
 $materiais = isset($_POST['Materiais']) ? json_decode($_POST['Materiais'], true) : [];
 
 // Cria um novo produto
 $AdicionarProduto = new ProdutosDAO();
-$produto = new Produto($CodProd, $NomeProd, $QtdProd, $EstadoProd);
+$produto = new Produto($CodProd, $NomeProd, $QtdProd, $EstadoProd, $preco);
 
 $id_atual = $AdicionarProduto->Consultarid_identificadorMax();
 $id_identificador = $id_atual+1;

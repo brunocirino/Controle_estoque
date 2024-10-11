@@ -25,20 +25,21 @@
         
                 // Adiciona os dados do produto para cada material
                 foreach ($materiais as $material) {
-                    $placeholders[] = "(?, ?, ?, ?, ?, ?)"; // Para cada material, cria placeholders
+                    $placeholders[] = "(?, ?, ?, ?, ?, ?,?)"; // Para cada material, cria placeholders
                     $values[] = $Produto->get_nome(); // nomeProd
                     $values[] = $Produto->get_quantidade(); // qtdProd
                     $values[] = $Produto->get_estadoProd(); // estadoProd
                     $values[] = $material['id_material']; // id_material
                     $values[] = $material['qtd_material']; // qtd_material
                     $values[] = $id_identificador;
+                    $values[] = $Produto->get_preco();
                 }
         
                 // Junta os placeholders para a inserção
                 $placeholdersString = implode(', ', $placeholders);
         
                 // A consulta de inserção para produtos
-                $sql = "INSERT INTO produtos (nomeProd, qtdProd, estadoProd, id_material, qtd_material, id_identificador) VALUES " . $placeholdersString;
+                $sql = "INSERT INTO produtos (nomeProd, qtdProd, estadoProd, id_material, qtd_material, id_identificador, preco) VALUES " . $placeholdersString;
         
                 // Prepara e executa a consulta
                 $inserir = $this->banco->prepare($sql);
@@ -65,6 +66,7 @@
                 p.qtdProd, 
                 p.estadoProd,
                 p.id_identificador,
+                p.preco,
                 GROUP_CONCAT(DISTINCT m.nomeMat ORDER BY m.codMat SEPARATOR ",") AS materiais_nomes,
                 GROUP_CONCAT(DISTINCT p.qtd_material ORDER BY m.codMat SEPARATOR ",") AS materiais_qtd
             FROM 
@@ -90,6 +92,7 @@
                     p.nomeProd, 
                     p.qtdProd, 
                     p.estadoProd, 
+                    p.preco,
                     GROUP_CONCAT(m.nomeMat ORDER BY m.codMat SEPARATOR ",") AS materiais_nomes,
                     GROUP_CONCAT(p.id_material ORDER BY m.codMat SEPARATOR ",") AS materiais_ids,
                     GROUP_CONCAT(p.qtd_material ORDER BY m.codMat SEPARATOR ",") AS materiais_qtd,
@@ -123,7 +126,7 @@
         }
         
 
-        public function Atualizar_Produto($codProd, $NomeProd, $qtdProd, $estadoProd, $materiais) {
+        public function Atualizar_Produto($codProd, $NomeProd, $qtdProd, $preco, $estadoProd, $materiais) {
             // Inicia uma transação
             $this->banco->beginTransaction();
         
@@ -137,18 +140,19 @@
                 $values = [];
         
                 foreach ($materiais as $material) {
-                    $placeholders[] = "(?, ?, ?, ?, ?, ?)";
+                    $placeholders[] = "(?, ?, ?, ?, ?, ?, ?)";
                     $values[] = $NomeProd; // nomeProd
                     $values[] = $qtdProd;  // qtdProd
                     $values[] = $estadoProd; // estadoProd
                     $values[] = $material['id_material']; // id_material
                     $values[] = $material['qtd_material']; // qtd_material
                     $values[] = $codProd; // id_identificador
+                    $values[] = $preco;
                 }
         
                 if (!empty($placeholders)) {
                     // Consulta para inserir os novos materiais
-                    $sql = "INSERT INTO produtos (nomeProd, qtdProd, estadoProd, id_material, qtd_material, id_identificador) VALUES " . implode(', ', $placeholders);
+                    $sql = "INSERT INTO produtos (nomeProd, qtdProd, estadoProd, id_material, qtd_material, id_identificador, preco) VALUES " . implode(', ', $placeholders);
                     $inserir = $this->banco->prepare($sql);
                     $inserir->execute($values);
                 }

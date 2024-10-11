@@ -34,7 +34,7 @@ function preencherTabela(data) {
 
 
         // Criar células para cada propriedade do produto
-        var keys = ['id_identificador', 'nomeProd', 'qtdProd', 'preco', 'estadoProd', 'materiais_nomes', 'materiais_qtd'];
+        var keys = ['id_identificador', 'nomeProd', 'qtdProd', 'estadoProd', 'preco'];
         keys.forEach(function(key) {
             var newCell = document.createElement('td');
             newCell.textContent = key === 'preco' ? 'R$ ' + produto[key] : produto[key];

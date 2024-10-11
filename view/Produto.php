@@ -43,7 +43,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                 <span class="txt-link">Material</span>
             </a>
         </li>
-        <li class="item-menu"><a href="../view/Protudo.php">
+        <li class="item-menu"><a href="../view/Produto.php">
                 <span class="icon"><i class="bi bi-clipboard"></i></span>
                 <span class="txt-link">Produto</span>
             </a>
@@ -96,6 +96,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                         <th>codigo produto</th>
                         <th>Nome produto</th>
                         <th>Quantidade produto</th>
+                        <th>Preço</th>
                         <th>Estado produto</th>
                         <th>Material utilizado</th>
                         <th>Quantidade Material</th>
@@ -122,6 +123,10 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
             <div>
                 <label for="edit-quantidade">Quantidade:</label>
                 <input type="text" id="edit-quantidade" name="edit-senha">
+            </div>
+            <div>
+                <label for="edit-preco">Preço:</label>
+                <input type="number" id="edit-preco" name="edit-preco">
             </div>
             <div>
                 <label for="edit-estado">Estado:</label>

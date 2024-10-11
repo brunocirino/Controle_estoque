@@ -6,15 +6,22 @@ class Produto{
     protected $qtdProd;
     protected $estadoProd;
 
-    public function __construct($codProd, $nomeProd, $qtdProd, $estadoProd){
+    protected $preco;
+
+    public function __construct($codProd, $nomeProd, $qtdProd, $estadoProd, $preco){
         $this->codProd = $codProd;
         $this->nomeProd = $nomeProd;
         $this->qtdProd = $qtdProd;
         $this->estadoProd = $estadoProd;
+        $this->preco = $preco;
     }
 
     public function get_id(){
         return $this->codProd;
+    }
+
+    public function get_preco(){
+        return $this->preco;
     }
 
     public function set_id($codProd){
