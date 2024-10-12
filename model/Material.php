@@ -9,13 +9,16 @@
         protected $EstoqueAtual;
         protected $Movimentacao;
 
-        public function __construct($nome, $descricao, $status, $estoquemin, $estoqueAtual, $Movimentacao){
+        protected $preco;
+
+        public function __construct($nome, $descricao, $status, $estoquemin, $estoqueAtual, $Movimentacao, $preco){
             $this->nome = $nome;
             $this->descricao = $descricao;
             $this->status = $status;
             $this->Estoquemin = $estoquemin;
             $this->EstoqueAtual = $estoqueAtual;
             $this->Movimentacao = $Movimentacao;
+            $this->preco = $preco;
         }
 
         public function get_codigo(){
@@ -50,7 +53,9 @@
             return $this->Movimentacao;
         }
 
-
+        public function get_Preco(){
+            return $this->preco;
+        }
     }
 
 ?>

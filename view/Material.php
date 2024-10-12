@@ -62,6 +62,11 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <span class="txt-link">Fornecedores</span>
             </a>
         </li>
+        <li class="item-menu"><a href="../view/SolicitacaoCompra.php">
+                <span class="icon"><i class="bi bi-cart-plus"></i></span>
+                <span class="txt-link">Solicitação de compra</span>
+            </a>
+        </li>
         <li class="item-menu"><a href="../view/Usuarios.php">
                 <span class="icon"><i class="bi bi-person-lines-fill"></i></span>
                 <span class="txt-link">Usuários</span>
@@ -104,6 +109,7 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                         <th>Estoque minimo</th>
                         <th>Estoque atual</th>
                         <th>movimentação </th>
+                        <th>Preço</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -144,6 +150,10 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
             <div>
                 <label for="edit-setor">Movimentação:</label>
                 <input type="text" id="edit-movimentacao" name="edit-setor">
+            </div>
+            <div>
+                <label for="edit-preco">Preço:</label>
+                <input type="number" id="edit-preco" name="edit-preco">
             </div>
 
             <button id="btn-salvar">Salvar</button>

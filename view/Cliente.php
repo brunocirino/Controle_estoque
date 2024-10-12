@@ -43,7 +43,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                 <span class="txt-link">Material</span>
             </a>
         </li>
-        <li class="item-menu"><a href="../view/Protudo.php">
+        <li class="item-menu"><a href="../view/Produto.php">
                 <span class="icon"><i class="bi bi-clipboard"></i></span>
                 <span class="txt-link">Produto</span>
             </a>
@@ -57,6 +57,11 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
         <li class="item-menu"><a href="../view/Fornecedores.php">
                 <span class="icon"><i class="bi bi-person-walking"></i></span>
                 <span class="txt-link">Fornecedores</span>
+            </a>
+        </li>
+        <li class="item-menu"><a href="../view/SolicitacaoCompra.php">
+                <span class="icon"><i class="bi bi-cart-plus"></i></span>
+                <span class="txt-link">Solicitação de compra</span>
             </a>
         </li>
         <li class="item-menu"><a href="../view/Usuarios.php">

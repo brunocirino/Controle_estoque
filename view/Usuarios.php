@@ -61,6 +61,11 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <span class="txt-link">Fornecedores</span>
             </a>
         </li>
+        <li class="item-menu"><a href="../view/SolicitacaoCompra.php">
+                <span class="icon"><i class="bi bi-cart-plus"></i></span>
+                <span class="txt-link">Solicitação de compra</span>
+            </a>
+        </li>
         <li class="item-menu"><a href="../view/Usuarios.php">
                 <span class="icon"><i class="bi bi-person-lines-fill"></i></span>
                 <span class="txt-link">Usuários</span>

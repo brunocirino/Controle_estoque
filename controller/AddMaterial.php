@@ -9,8 +9,9 @@ $statusMat = $_POST['StatusMat'];
 $estoqueMin  = $_POST['EstoqueMin'];
 $estoqueAtual  = $_POST['EstoqueAtual'];
 $movimentacao   = $_POST['Movimentacao'];
+$preco = $_POST['preco'];
         
-    $Material = new Material($NomeMat, $descMat, $statusMat, $estoqueMin, $estoqueAtual, $movimentacao);
+    $Material = new Material($NomeMat, $descMat, $statusMat, $estoqueMin, $estoqueAtual, $movimentacao, $preco);
     $MaterialDAO = new MaterialDAO();
     
 
