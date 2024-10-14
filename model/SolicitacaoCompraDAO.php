@@ -10,9 +10,9 @@ require_once("UserDAO.php");
 
         public function cadastrarSolicitacao($SolicitacaoCompra, $id_identificador, $status){
 
-            $inserir = $this->banco->prepare("INSERT INTO pedidocompra (Titulo, id_forn, id_mat, preco_unit, preco_total, Prioridade, id_identificador, status) VALUES (?,?,?,?,?,?,?,?);");
+            $inserir = $this->banco->prepare("INSERT INTO pedidocompra (Titulo, id_forn, id_mat, qtdMat, preco_unit, preco_total, Prioridade, id_identificador, status) VALUES (?,?,?,?,?,?,?,?,?);");
 
-            $nova_POCompra = array($SolicitacaoCompra->get_titulo(), $SolicitacaoCompra->get_id_forn(), $SolicitacaoCompra->get_id_mat(), $SolicitacaoCompra->get_preco_unit(), $SolicitacaoCompra->get_preco_total(), $SolicitacaoCompra->get_prioiradade(), $id_identificador, $status);
+            $nova_POCompra = array($SolicitacaoCompra->get_titulo(), $SolicitacaoCompra->get_id_forn(), $SolicitacaoCompra->get_id_mat(), $SolicitacaoCompra->get_qtdMat(), $SolicitacaoCompra->get_preco_unit(), $SolicitacaoCompra->get_preco_total(), $SolicitacaoCompra->get_prioiradade(), $id_identificador, $status);
 
             if($inserir->execute($nova_POCompra)){
                 return true;
@@ -45,12 +45,14 @@ require_once("UserDAO.php");
         
 
         public function ConsultarPoCompra($codPO){
-            $consulta = $this->banco->prepare('SELECT *, 
-                    (SELECT SUM(preco_total) 
-                        FROM pedidocompra 
-                        WHERE id_identificador LIKE :codPO) AS total_preco
-                FROM pedidocompra 
-                WHERE id_identificador LIKE :codPO;
+            $consulta = $this->banco->prepare('SELECT 
+                p.Titulo, p.id_identificador, p.status, p.Prioridade, p.preco_unit, p.preco_total, f.nomeFantasia, m.nomeMat, p.qtdMat, 
+                SUM(p.preco_total) OVER() AS total_preco
+                FROM pedidocompra p
+                JOIN fornecedores f ON p.id_forn = f.id
+                JOIN materiais m ON p.id_mat = m.codMat
+                WHERE p.id_identificador = :codPO
+                GROUP BY p.Titulo, p.id_identificador, p.status, p.Prioridade, f.nomeFantasia, m.nomeMat, p.qtdMat, p.preco_unit, p.preco_total
                 ');
                 $consulta->bindValue(':codPO',$codPO);
                 $consulta->execute();

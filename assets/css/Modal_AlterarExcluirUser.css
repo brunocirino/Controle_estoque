@@ -64,3 +64,12 @@ form button {
 form button:hover {
     background-color: #45a049;
 }
+
+#btn-salvaredit{
+    margin-top: 12px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}

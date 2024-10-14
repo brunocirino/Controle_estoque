@@ -37,7 +37,7 @@ foreach ($materiais as $material) {
         $idForn = $fornecedor['id_fornecedor']; // Acessa o valor correto do id_fornecedor
 
         // Cria uma nova solicitação de compra
-        $SolicitacaoCompra = new SolicitacaoCompra($Titulo, $idForn, $idMaterial, $Preco_unit, $Valor_total, $Prioridade);
+        $SolicitacaoCompra = new SolicitacaoCompra($Titulo, $idForn, $idMaterial, $qtdMaterial, $Preco_unit, $Valor_total, $Prioridade);
 
         // Cadastra a solicitação de compra
         $SolicitacaoCompraDAO->cadastrarSolicitacao($SolicitacaoCompra, $id_identificador,$status);
