@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var tabelaMateriais = document.getElementById('materiais-table').getElementsByTagName('tbody')[0];
                 tabelaMateriais.innerHTML = ''; // Limpa a tabela antes de preencher
     
-                detalhes.forEach(function(material) {
+                detalhes.forEach(function(material, index) {
                     var novaLinha = tabelaMateriais.insertRow(); // Insere nova linha na tabela
                     var celulaNome = novaLinha.insertCell(0); // Insere célula para o nome do material
                     var celulaQuantidade = novaLinha.insertCell(1); // Insere célula para a quantidade do material
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var celulaPrecoTotal = novaLinha.insertCell(3); // Insere célula para o preço total
     
                     celulaNome.textContent = material.nomeMat; // Preenche o nome do material
-                    celulaQuantidade.textContent = material.qtdMat; // Aqui você pode usar uma lógica para determinar a quantidade se necessário
+                    celulaQuantidade.innerHTML = `<input id="qtdMat-${index}" type="number" value="${material.qtdMat}" >`;
                     celulaPrecoUnitario.textContent = material.preco_unit; // Preenche o preço unitário
                     celulaPrecoTotal.textContent = material.preco_total; // Preenche o preço total
                 });

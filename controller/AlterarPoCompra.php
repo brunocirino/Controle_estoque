@@ -1,21 +1,18 @@
 <?php
 
-require_once('../model/ProdutosDAO.php');
+require_once('../model/SolicitacaoCompraDAO.php');
 
-    $CodProd = $_POST['Codigo'];
-    $NomeProd = $_POST['Nome'];
-    $QtdProd = $_POST['QtdProd'];
-    $EstadoProd = $_POST['EstadoProd'];
-    $CodMat = $_POST['CodMat'];
-    $qtdMat = $_POST['qtdMat'];
-    $preco = $_POST['preco'];
-    $Processos = $_POST['Processos'];
+    $CodPo = $_POST['Codigo'];
+    $titulo = $_POST['Titulo'];
+    $Prioridade = $_POST['Prioridade'];
+    $Fornecedores = $_POST['Fornecedores'];
+    $Status = $_POST['Status'];
 
     $materiais = isset($_POST['Materiais']) ? json_decode($_POST['Materiais'], true) : [];
 
-    $AlterarProduto = new ProdutosDAO();
+    $SolicitacaoCompraDAO = new SolicitacaoCompraDAO();
     
-    $AlterarProduto->Atualizar_Produto($CodProd, $NomeProd, $QtdProd, $preco, $EstadoProd, $materiais);
+    $SolicitacaoCompraDAO->Atualizar_PoCompra($CodPo, $titulo, $Fornecedores, $materiais, $Prioridade, $Status);
 
     echo '<script type="text/javascript">
         alert("Produto alterado com sucesso");

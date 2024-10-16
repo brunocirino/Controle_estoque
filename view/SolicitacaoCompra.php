@@ -92,6 +92,7 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <h1>Solicitaçôes de compra</h1>
             </div>
             <div class="row-buttons">
+                <button id="btn-entregue">Entregue</button>
                 <button id="btn-adicionar">Adicionar</button>
                 <button id="btn-editar">Editar</button>
                 <button id="btn-Excluir">Excluir</button>
@@ -202,6 +203,8 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <!-- Linhas de materiais serão inseridas aqui -->
             </tbody>
         </table>
+
+        <button id="btn-salvaredit">Salvar</button>
     </div>
 </div>
 
