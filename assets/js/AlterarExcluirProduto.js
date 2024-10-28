@@ -51,6 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }).then(produtoResponse => {
                 console.log('Requisição AJAX bem sucedida:', produtoResponse);
                 var produtos = JSON.parse(produtoResponse);
+
+                console.log(produtos)
+
+                if (produtos.length === 0) {
+                    alert('Não existe nenhum produto com esse id');
+                    return;  // Interrompe a execução do restante do código
+                }
     
                 // Objeto para armazenar dados do produto
                 var produtoData = {};
@@ -135,20 +142,48 @@ document.addEventListener('DOMContentLoaded', function() {
         let qtdProd = document.getElementById('edit-quantidade').value;
         let estadoProd = document.getElementById('edit-estado').value;
         let preco = document.getElementById('edit-preco').value;
+
+        
     
         // Captura os materiais selecionados e suas respectivas quantidades
         let materiais = [];  // Array para armazenar os materiais selecionados
         let selectMateriais = document.getElementById('edit-materiais');
+
+        if (selectMateriais.selectedOptions.length === 0) {
+            alert('Por favor, selecione pelo menos um material.');
+            return; // Interrompe a execução se nenhum material for selecionado
+        }
+        
     
         // Percorre as opções selecionadas no campo de seleção múltipla
         for (let i = 0; i < selectMateriais.selectedOptions.length; i++) {
             let id_material = selectMateriais.selectedOptions[i].value;  // Obtém o valor do ID do material
             let qtd_material = document.getElementById('quantidade-' + id_material).value;  // Obtém a quantidade correspondente
+
+            if (!qtd_material) {
+                alert(`Por favor, insira uma quantidade para o material com ID ${id_material}.`);
+                return; // Interrompe a execução se alguma quantidade estiver em branco
+            }
     
             materiais.push({
                 'id_material': id_material,
                 'qtd_material': qtd_material
             });
+        }
+
+        function isNumber(value) {
+            return !isNaN(value) && value.trim() !== "";  // Confirma que é um número e não está vazio
+        }
+
+
+        if (!nomeProd || !qtdProd || !estadoProd || !preco || !materiais) {
+            alert('Por favor, preencha todos os campos antes de continuar.');
+            return; // Interrompe a execução se algum campo estiver vazio
+        }
+
+        if (!isNumber(preco) || !isNumber(qtdProd)) {
+            alert('Os campos Preço, Estoque Mínimo e Estoque Atual devem conter apenas números.');
+            return; // Interrompe a execução se algum campo não for numérico
         }
     
         if (isEditMode) {
@@ -165,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
+                    alert('Produto editado com sucesso!')
                     window.location.href = "../view/Produto.php";
                 },
                 error: function(xhr, status, error) {
@@ -204,6 +240,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { CodProd: CodigoProd },
                     success: function(response) {
+                        response = JSON.parse(response); 
+                        
+                        if (!response.success) {  // Verifica o campo "success" no JSON
+                            alert('Não existe nenhum usuário com esse id');
+                            return;
+                        }
                         console.log('Produto excluído com sucesso:', response);
                         alert("Excluído com sucesso!");
                         window.location.href = "../view/Produto.php";

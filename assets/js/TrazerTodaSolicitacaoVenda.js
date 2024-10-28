@@ -1,6 +1,9 @@
-function TrazerTodosUsers() {
+
+
+// Função para fazer a requisição AJAX e preencher a tabela com os dados retornados
+function trazerTodaSolicitacao() {
     $.ajax({
-        url: '../controller/TrazerTodosFornecedores.php',
+        url: '../controller/TrazerSolicitacaoVenda.php',
         method: 'GET',
         success: function(response) {
             console.log('Requisição AJAX bem sucedida:', response);
@@ -13,25 +16,10 @@ function TrazerTodosUsers() {
     });
 }
 
-// Função para aplicar máscara de CNPJ
-function formatarCNPJ(cnpj) {
-    
-    cnpj = cnpj.replace(/\D/g, '');
-    
-    return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-}
-
-// Função para aplicar máscara de telefone
-function formatarTelefone(telefone) {
-    
-    telefone = telefone.replace(/\D/g, '');
-    
-    return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1)$2-$3');
-}
-
+// Função para preencher a tabela com os dados retornados da requisição AJAX
 function preencherTabela(data) {
     // Converter a resposta JSON em um array de objetos
-    var fornecedores = JSON.parse(data);
+    var produtos = JSON.parse(data);
 
     // Selecionar o corpo da tabela onde os dados serão inseridos
     var tbody = document.querySelector('tbody');
@@ -40,19 +28,16 @@ function preencherTabela(data) {
     tbody.innerHTML = '';
 
     // Iterar sobre os produtos e adicionar linhas à tabela
-    fornecedores.forEach(function(fornecedor, index) {
+    produtos.forEach(function(produto, index) {
         var newRow = document.createElement('tr');
         newRow.classList.add('linha' + (index + 1));
 
-        // Aplicar a máscara de CNPJ e Telefone antes de exibir
-        fornecedor.CNPJ = formatarCNPJ(fornecedor.CNPJ);
-        fornecedor.Telefone = formatarTelefone(fornecedor.Telefone);
 
-        // Criar células para cada propriedade do usuario e preencher com os dados
-        var keys = ['id', 'Nome', 'nomeFantasia', 'CNPJ', 'Telefone', 'Contactante', 'endFaturamento', 'endEntrega', 'endCobranca'];
+        // Criar células para cada propriedade do produto
+        var keys = ['id_identificador', 'Titulo', 'nomeCliente', 'nomeProd', 'qtdProd', 'preco_total_PO', 'status'];
         keys.forEach(function(key) {
             var newCell = document.createElement('td');
-            newCell.textContent = fornecedor[key];
+            newCell.textContent = key === 'total_preco' ? 'R$ ' + produto[key] : produto[key];
             newRow.appendChild(newCell);
         });
 
@@ -61,6 +46,9 @@ function preencherTabela(data) {
     });
 }
 
+
+
+// Chamando as funções quando a página é carregada
 document.addEventListener('DOMContentLoaded', function() {
-    TrazerTodosUsers();
+    trazerTodaSolicitacao();
 });

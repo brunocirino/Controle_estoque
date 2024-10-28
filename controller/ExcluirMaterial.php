@@ -6,7 +6,9 @@ require_once('../model/MaterialDAO.php');
 
     $AlterarMaterial = new MaterialDAO();
     
-    $AlterarMaterial->excluir_material($CodMat);
+    $resultados = $AlterarMaterial->excluir_material($CodMat);
+
+    echo json_encode(["success" => $resultados]);
 
   ?> 
    

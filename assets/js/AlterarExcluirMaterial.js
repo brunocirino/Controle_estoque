@@ -32,10 +32,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 data: { Codigo: CodigoMat }, // Passando o código do material como parâmetro
                 success: function(response) {
+                    
                     console.log('Requisição AJAX bem sucedida:', response);
                     var material = JSON.parse(response)[0];
 
                     console.log(material);
+
+                    if (material == undefined) {
+                        alert('Não existe nenhum material com esse id');
+                        return;  // Interrompe a execução do restante do código
+                    }
+
                     var codMat = material.codMat;
                     var nomeMat = material.nomeMat;
                     var descMat = material.descMat;
@@ -55,12 +62,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-preco').value = preco;
 
                     Titulo.textContent = "Editar Material";
+
+                    modal.style.display = 'block';
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
                 }
             });
-            modal.style.display = 'block';
+            
         } else {
             alert('Por favor, digite o código do material.');
         }
@@ -76,6 +85,28 @@ document.addEventListener('DOMContentLoaded', function() {
         var estoqueAtual = document.getElementById('edit-estoqueAtual').value;
         var movimentacao = document.getElementById('edit-movimentacao').value;
         var preco = document.getElementById('edit-preco').value;
+
+        console.log(statusMat)
+
+        function isNumber(value) {
+            return !isNaN(value) && value.trim() !== "";  // Confirma que é um número e não está vazio
+        }
+
+        if (!nomeMat || !descMat || !statusMat ||
+        !estoqueMin || !estoqueAtual || !movimentacao || 
+        !preco) {
+        
+        alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+        return;  // Interrompe a execução se algum campo estiver vazio
+        }
+    
+        // Verificação para garantir que todos os campos contenham números
+        if (!isNumber(preco) || !isNumber(estoqueMin) || !isNumber(estoqueAtual)) {
+            alert('Os campos Preço, Estoque Mínimo e Estoque Atual devem conter apenas números.');
+            return; // Interrompe a execução se algum campo não for numérico
+        }
+
+        
 
        if(isEditMode){
         $.ajax({
@@ -117,6 +148,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { CodMat: CodigoMat },
                     success: function(response) {
+                        response = JSON.parse(response); 
+                        
+                        if (!response.success) {  // Verifica o campo "success" no JSON
+                            alert('Não existe nenhum usuário com esse id');
+                            return;
+                        }
                         console.log('Material excluído com sucesso:', response);
                         alert("Excluído ou inativado com sucesso!");
                         window.location.href = "../view/Material.php";

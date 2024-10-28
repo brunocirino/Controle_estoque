@@ -40,11 +40,9 @@
             $delete = $this->banco->prepare("DELETE FROM fornecedores WHERE id=?");
             $idFornecedor = array($id);
 
-            if($delete->execute($idFornecedor)){
-                return true;
-            }
+            $delete->execute($idFornecedor);
         
-            return false;
+            return $delete->rowCount() > 0; 
         }
 
         public function ConsultarIDFornecedor($CNPJ){    

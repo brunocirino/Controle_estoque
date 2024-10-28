@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('Requisição AJAX bem sucedida:', response);
                     var fornecedor = JSON.parse(response)[0];
 
+                    if (fornecedor == undefined) {
+                        alert('Não existe nenhum fornecedor com esse id');
+                        return;  // Interrompe a execução do restante do código
+                    }
+
                     console.log(fornecedor);
                     var codForn = fornecedor.id;
                     var nome = fornecedor.Nome;
@@ -58,12 +63,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-cobrança').value = endCobranca;
 
                     Titulo.textContent = "Editar Fornecedor";
+                    modal.style.display = 'block';
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
                 }
             });
-            modal.style.display = 'block';
+            
         } else {
             alert('Por favor, digite o código do Fornecedor.');
         }
@@ -80,6 +86,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var endFaturamento = document.getElementById('edit-faturamento').value;
         var endEntrega = document.getElementById('edit-entrega').value;
         var endCobranca = document.getElementById('edit-cobrança').value;
+
+        if (!Nome || !nmFantasia || !CNPJ ||
+            !Telefone || !Contactante || !endFaturamento || 
+            !endEntrega || !endCobranca) {
+            
+            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+            return;  // Interrompe a execução se algum campo estiver vazio
+            }
+        
 
         console.log(Telefone)
        if(isEditMode){
@@ -122,6 +137,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { idForn: idForn },
                     success: function(response) {
+
+                        response = JSON.parse(response); 
+                        
+                        if (!response.success) {  // Verifica o campo "success" no JSON
+                            alert('Não existe nenhum fornecedor com esse id');
+                            return;
+                        }
                         console.log('Fornecedor excluído com sucesso:', response);
                         alert("Excluído ou inativado com sucesso!");
                         window.location.href = "../view/Fornecedores.php";

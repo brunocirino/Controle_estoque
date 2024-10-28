@@ -60,6 +60,7 @@ function preencherFornecedores(fornecedoresCadastrados) {
 document.getElementById('edit-Fornecedor').addEventListener('change', function() {
     const selecionados = Array.from(this.selectedOptions).map(opt => opt.value);
     const container = document.getElementById('detalhes-fornecedores-container');
+    console.log(container)
     container.innerHTML = ''; // Limpa os campos anteriores
 
     // Adiciona campos de detalhes para os fornecedores selecionados (opcional)

@@ -68,11 +68,9 @@ require_once("UserDAO.php");
             $delete = $this->banco->prepare("DELETE FROM materiais WHERE codMat=?");
             $codigoMaterial= array($codMat);
 
-            if($delete->execute($codigoMaterial)){
-                return true;
-            }
+            $delete->execute($codigoMaterial);
         
-            return false;
+            return $delete->rowCount() > 0; 
         }
     
     }

@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('Requisição AJAX bem sucedida:', response);
                     var Cliente = JSON.parse(response)[0];
 
+                    if (Cliente == undefined) {
+                        alert('Não existe nenhum cliente com esse id');
+                        return;  // Interrompe a execução do restante do código
+                    }
+
                     console.log(Cliente);
                     
                     CodCli = Cliente.CodCli;
@@ -59,12 +64,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-telefone').value = Telefone;
 
                     Titulo.textContent = "Editar Cliente";
+
+                    modal.style.display = 'block';
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
                 }
             });
-            modal.style.display = 'block';
+            
         } else {
             alert('Por favor, digite o código do cliente.');
         }
@@ -81,6 +88,24 @@ document.addEventListener('DOMContentLoaded', function() {
         UF = document.getElementById('edit-uf').value;
         Telefone = document.getElementById('edit-telefone').value;
 
+        if (!nomeCli || !cpfCli || !emailCli ||
+            !CEP || !Bairro || !UF || 
+            !Telefone) {
+            
+            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+            return;  // Interrompe a execução se algum campo estiver vazio
+            }
+
+        function isNumber(value) {
+            return !isNaN(value) && value.trim() !== "";  // Confirma que é um número e não está vazio
+        }
+
+        if (!isNumber(cpfCli) || !isNumber(CEP) || !isNumber(Telefone)) {
+            alert('Os campos Preço, CPF , CEP e Telefone devem conter apenas números.');
+            return; // Interrompe a execução se algum campo não for numérico
+        }
+
+
        if(isEditMode){
         $.ajax({
             url: '../controller/AlterarCliente.php',
@@ -88,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {Codigo: CodCli, Nome: nomeCli, cpfCli: cpfCli, emailCli: emailCli, CEP: CEP, Bairro: Bairro, UF: UF, Telefone: Telefone, id_end: id_end},
             success: function(response) {
                 console.log('Requisição AJAX bem sucedida:', response);
-                alert('1');
+                alert('Cliente editado com sucesso!');
                 window.location.href = "../view/Cliente.php"
             },
             error: function(xhr, status, error) {
@@ -115,6 +140,12 @@ document.addEventListener('DOMContentLoaded', function() {
     btnExcluir.addEventListener('click', function() {
         var CodigoCli = document.querySelector('.product-id').value;
         var linha = document.querySelector(`tr[data-cod-cli="${CodigoCli}"]`);
+
+        if (!linha) {
+            alert('Não existe nenhum cliente com esse ID');
+            return; // Interrompe a execução da função se a linha não existir
+        }
+        
         var id_end = linha.getAttribute('data-id-end')
 
         console.log(id_end);

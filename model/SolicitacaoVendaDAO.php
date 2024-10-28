@@ -1,18 +1,17 @@
 <?php
 require_once("UserDAO.php"); 
-
-    class SolicitacaoCompraDAO{
+    class SolicitacaoVendaDAO{
         private $banco;
 
         public function __construct(){
             $this->banco = new PDO('mysql:host='.HOST.'; dbname='.DB_NAME,USER,PASSWORD);
         }
 
-        public function cadastrarSolicitacao($SolicitacaoCompra, $id_identificador, $status){
+        public function cadastrarSolicitacao($SolicitacaoVenda, $id_identificador, $status){
 
-            $inserir = $this->banco->prepare("INSERT INTO pedidocompra (Titulo, id_forn, id_mat, qtdMat, preco_unit, preco_total, Prioridade, id_identificador, status) VALUES (?,?,?,?,?,?,?,?,?);");
+            $inserir = $this->banco->prepare("INSERT INTO pedidovenda (Titulo, nomeCliente, cpfCliente, codProd, nomeProd, qtdProd, prcUnitProd, preco_total, id_identificador, status) VALUES (?,?,?,?,?,?,?,?,?,?);");
 
-            $nova_POCompra = array($SolicitacaoCompra->get_titulo(), $SolicitacaoCompra->get_id_forn(), $SolicitacaoCompra->get_id_mat(), $SolicitacaoCompra->get_qtdMat(), $SolicitacaoCompra->get_preco_unit(), $SolicitacaoCompra->get_preco_total(), $SolicitacaoCompra->get_prioiradade(), $id_identificador, $status);
+            $nova_POCompra = array($SolicitacaoVenda->get_Titulo(), $SolicitacaoVenda->get_nomeCli(), $SolicitacaoVenda->get_cpfCli(), $SolicitacaoVenda->get_cod_prod(), $SolicitacaoVenda->get_nome_prod(), $SolicitacaoVenda->get_qtd_prod(), $SolicitacaoVenda->get_preco_unit_prod(), $SolicitacaoVenda->get_preco_total(), $id_identificador, $status);
 
             if($inserir->execute($nova_POCompra)){
                 return true;
@@ -23,72 +22,54 @@ require_once("UserDAO.php");
 
         
         public function TrazerTodaSolicitacao() {
-            $consulta = $this->banco->prepare('SELECT 
-                    c.Titulo, 
-                    SUM(c.preco_total) AS total_preco, 
-                    c.Prioridade, 
-                    c.NR_NF,
-                    c.status, 
-                    c.id_identificador, 
-                    f.nomeFantasia
-                FROM pedidocompra c
-                JOIN fornecedores f ON c.id_forn = f.id
-                GROUP BY 
-                    c.Titulo, 
-                    c.Prioridade, 
-                    c.status, 
-                    c.id_identificador, 
-                    f.nomeFantasia;');
+            $consulta = $this->banco->prepare('SELECT p.Titulo, p.nomeCliente, p.cpfCliente, p.NR_NF, p.preco_total_PO, p.nomeProd, p.qtdProd, p.preco_total, p.status, p.id_identificador
+            FROM pedidovenda as p
+            GROUP BY p.id_identificador');
             $consulta->execute();
             $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
             return $resultados;
         }
         
 
-        public function ConsultarPoCompra($codPO){
-            $consulta = $this->banco->prepare('SELECT 
-                p.Titulo, p.id_identificador, p.status, p.NR_NF, p.Prioridade, p.id_mat, p.id_forn, p.preco_unit, p.preco_total, f.nomeFantasia, m.nomeMat, p.qtdMat, 
-                SUM(p.preco_total) OVER() AS total_preco
-                FROM pedidocompra p
-                JOIN fornecedores f ON p.id_forn = f.id
-                JOIN materiais m ON p.id_mat = m.codMat
-                WHERE p.id_identificador = :codPO
-                GROUP BY p.Titulo, p.id_identificador, p.status, p.id_mat, p.id_forn, p.Prioridade, f.nomeFantasia, m.nomeMat, p.qtdMat, p.preco_unit, p.preco_total
-                ');
-                $consulta->bindValue(':codPO',$codPO);
-                $consulta->execute();
-                $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
-                return $resultados;
+        public function ConsultarPoVenda($codPO) {
+            $consulta = $this->banco->prepare('SELECT * FROM pedidovenda WHERE id_identificador = :codPO');
+            $consulta->bindValue(':codPO', $codPO);
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            return $resultados;
         }
+        
 
-        public function Atualizar_PoCompra($id_identificador, $NF, $titulo, $id_forn, $materiais, $Prioridade, $Status) {
+        public function Atualizar_PoVenda($id_identificador, $titulo, $NF, $nomeCliente, $cpfCliente, $Produtos, $Status, $preco_total_PO) {
             // Inicia uma transação
             $this->banco->beginTransaction();
         
             try {
                 // 1. Excluir todos os materiais antigos associados ao pedido
-                $deletePoCompra = $this->banco->prepare("DELETE FROM pedidocompra WHERE id_identificador = ?");
+                $deletePoCompra = $this->banco->prepare("DELETE FROM pedidovenda WHERE id_identificador = ?");
                 $deletePoCompra->execute(array($id_identificador));
                 
-                $sql = "INSERT INTO pedidocompra (Titulo, id_forn, id_mat, qtdMat, preco_unit, preco_total, NR_NF, Prioridade, id_identificador, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO pedidovenda (Titulo, nomeCliente, cpfCliente, codProd, nomeProd, qtdProd, prcUnitProd, preco_total, preco_total_PO, NR_NF, status, id_identificador) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
                 // Prepara a consulta
                 $inserir = $this->banco->prepare($sql);
 
                 // Percorre cada material e executa o INSERT
-                foreach ($materiais as $material) {
+                foreach ($Produtos as $produto) {
                     $inserir->execute([
-                        $titulo,        // Título do pedido de compra
-                        $id_forn,                   // ID do fornecedor
-                        $material['id_mat'],        // ID do material
-                        $material['qtd_material'],  // Quantidade do material
-                        $material['preco_unit'],    // Preço unitário
-                        $material['preco_total'],
-                        $NF,    // Preço total
-                        $Prioridade,                // Prioridade
-                        $id_identificador,          // ID identificador
-                        $Status                     // Status
+                        $titulo,       
+                        $nomeCliente,
+                        $cpfCliente,                 
+                        $produto['id_prod'],       
+                        $produto['nome_prod'],  
+                        $produto['qtd_prod'],    
+                        $produto['preco_unit'],
+                        $produto['preco_total'],
+                        $preco_total_PO, 
+                        $NF,
+                        $Status, 
+                        $id_identificador,         
                     ]);
                 }
 
@@ -149,7 +130,7 @@ require_once("UserDAO.php");
 
         public function Consultarid_identificadorMax() {
             // Prepara a consulta para selecionar o maior id_identificador
-            $consulta = $this->banco->prepare('SELECT MAX(id_identificador) AS max_id FROM pedidocompra');
+            $consulta = $this->banco->prepare('SELECT MAX(id_identificador) AS max_id FROM pedidovenda');
             $consulta->execute();
             
             // Busca o resultado
@@ -159,9 +140,9 @@ require_once("UserDAO.php");
             return $resultado ? $resultado['max_id'] : null;
         }
 
-        public function excluir_Po_Compra($id_identificador){    
+        public function excluir_Po_Venda($id_identificador){    
 
-            $delete = $this->banco->prepare("DELETE FROM pedidocompra WHERE id_identificador=?");
+            $delete = $this->banco->prepare("DELETE FROM pedidovenda WHERE id_identificador=?");
             $codigoMaterial= array($id_identificador);
 
             if($delete->execute($codigoMaterial)){
@@ -170,6 +151,22 @@ require_once("UserDAO.php");
         
             return false;
         }
+
+        public function Inserir_valor_total($valor_total, $id_identificador) {    
+            // Prepare a query para atualizar o valor total na tabela pedidovenda
+            $update = $this->banco->prepare("UPDATE pedidovenda SET preco_total_PO = ? WHERE id_identificador = ?");
+            
+            // Cria um array com os valores a serem inseridos na query
+            $InserirValorTotal = array($valor_total, $id_identificador);
+        
+            // Executa a query e verifica se foi bem sucedida
+            if ($update->execute($InserirValorTotal)) {
+                return true; // Retorna true se a execução foi bem-sucedida
+            }
+            
+            return false; // Retorna false caso contrário
+        }
+        
     
     }
 ?>

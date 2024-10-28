@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 data: {Codigo: CodigoUser }, // Passando o código do usuário como parâmetro
                 success: function(response) {
+                    if (response == 'false') {
+                        alert('Não existe nenhum usuário com esse id');
+                        return;  // Interrompe a execução do restante do código
+                    }
                     console.log('Requisição AJAX bem sucedida:', response);
                     // Preencher a tabela com os dados retornados
                     var usuario = JSON.parse(response);
@@ -51,12 +55,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-senha').value = senha;
                     document.getElementById('edit-status').value = status;
                     document.getElementById('edit-setor').value = setor;
+
+                    modal.style.display = 'block';
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
                 }
             });
-            modal.style.display = 'block';
+            
         } else {
             alert('Por favor, digite o código do usuário.');
         }
@@ -71,6 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
         statusUser = document.getElementById('edit-status').value;
         setor = document.getElementById('edit-setor').value;
 
+        if (!nome || !login || !senha || !statusUser || !setor) {
+            alert('Por favor, preencha todos os campos antes de continuar.');
+            return; // Interrompe a execução se algum campo estiver vazio
+        }
+
        if(isEditMode){
         $.ajax({
             url: '../controller/AlterarUser.php',
@@ -78,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {Codigo: CodigoUser, Nome: nome, Login: login, Senha: senha, Status: statusUser, Setor: setor },
             success: function(response) {
                 console.log('Requisição AJAX bem sucedida:', response);
+                alert('usuário alterado com sucesso!')
                 window.location.href = "../view/Usuarios.php"
             },
             error: function(xhr, status, error) {
@@ -91,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {nome: nome, login: login, senha: senha, statusUser: statusUser, setor: setor },
             success: function(response) {
                 console.log('Requisição AJAX bem sucedida:', response);
+                alert('usuário adicionado com sucesso!')
                 window.location.href = "../view/Usuarios.php"
             },
             error: function(xhr, status, error) {
@@ -100,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
        }
     })
 
-    btnExcluir.addEventListener('click', function(){
+    btnExcluir.addEventListener('click', function() {
         var CodigoUser = document.querySelector('.product-id').value;
         if (CodigoUser) {
             if (confirm("Tem certeza que deseja excluir este usuário?")) {
@@ -109,6 +122,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { Codigo: CodigoUser },
                     success: function(response) {
+                        response = JSON.parse(response);  // Parseia a resposta para JSON
+                        
+                        if (!response.success) {  // Verifica o campo "success" no JSON
+                            alert('Não existe nenhum usuário com esse id');
+                            return;
+                        }
+                        
                         console.log('Usuário excluído com sucesso:', response);
                         alert("Excluído ou inativado com sucesso!");
                         window.location.href = "../view/Usuarios.php";
@@ -121,7 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             alert('Por favor, digite o código do usuário.');
         }  
-    })
+    });
+    
+    
 
     // Quando o usuário clicar no botão de fechar (x), oculta o modal
     spanClose.addEventListener('click', function() {

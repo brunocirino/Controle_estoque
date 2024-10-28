@@ -7,7 +7,9 @@ require_once('../model/ProdutosDAO.php');
 
     $ExcluirProd = new ProdutosDAO();
     
-    $ExcluirProd->excluir_produto($codProd);
+    $resultados = $ExcluirProd->excluir_produto($codProd);
+
+    echo json_encode(["success" => $resultados]);
 
   ?> 
    

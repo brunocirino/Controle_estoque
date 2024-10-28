@@ -6,7 +6,9 @@ require_once('../model/FornecedorDAO.php');
 
     $excluirFornecedor = new FornecedorDAO();
     
-    $excluirFornecedor->excluir_fornecedor($idForn)
+    $resultados = $excluirFornecedor->excluir_fornecedor($idForn);
+
+    echo json_encode(["success" => $resultados]);
 
   ?> 
    

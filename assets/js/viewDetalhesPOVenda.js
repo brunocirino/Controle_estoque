@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function abrirModalDetalhes(codigo) {
         $.ajax({
-            url: '../controller/ConsultarPoCompra.php',
+            url: '../controller/ConsultarPoVenda.php',
             method: 'POST',
             data: { Codigo: codigo },
             success: function(response) {
@@ -26,27 +26,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Preencha o modal com os detalhes recebidos
                 document.getElementById('view-Codigo').value = detalhes[0].id_identificador; // Supondo que você tenha um campo para o código
                 document.getElementById('view-titulo').value = detalhes[0].Titulo;
-                document.getElementById('view-Fornecedor').value = detalhes[0].nomeFantasia; // Supondo que isso represente o fornecedor
-                document.getElementById('view-preco-total').value = detalhes[0].total_preco;
-                document.getElementById('view-prioridade').value = detalhes[0].Prioridade;
+                document.getElementById('view-cliente').value = detalhes[0].nomeCliente; // Supondo que isso represente o fornecedor
+                document.getElementById('view-cpf-cliente').value = detalhes[0].cpfCliente;
+                document.getElementById('view-preco-total').value = detalhes[0].preco_total_PO;
                 document.getElementById('view-status').value = detalhes[0].status;
                 document.getElementById('view-nf').value = detalhes[0].NR_NF;
     
                 // Preencher a tabela de materiais
-                var tabelaMateriais = document.getElementById('materiais-table').getElementsByTagName('tbody')[0];
-                tabelaMateriais.innerHTML = ''; // Limpa a tabela antes de preencher
+                var tabelaProdutos = document.getElementById('produtos-table').getElementsByTagName('tbody')[0];
+                tabelaProdutos.innerHTML = ''; // Limpa a tabela antes de preencher
     
-                detalhes.forEach(function(material, index) {
-                    var novaLinha = tabelaMateriais.insertRow(); // Insere nova linha na tabela
+                detalhes.forEach(function(Produto, index) {
+                    var novaLinha = tabelaProdutos.insertRow(); // Insere nova linha na tabela
                     var celulaNome = novaLinha.insertCell(0); // Insere célula para o nome do material
                     var celulaQuantidade = novaLinha.insertCell(1); // Insere célula para a quantidade do material
                     var celulaPrecoUnitario = novaLinha.insertCell(2); // Insere célula para o preço unitário
                     var celulaPrecoTotal = novaLinha.insertCell(3); // Insere célula para o preço total
     
-                    celulaNome.textContent = material.nomeMat; // Preenche o nome do material
-                    celulaQuantidade.innerHTML = `<input id="qtdMat-${index}" type="number" value="${material.qtdMat}" >`;
-                    celulaPrecoUnitario.textContent = material.preco_unit; // Preenche o preço unitário
-                    celulaPrecoTotal.textContent = material.preco_total; // Preenche o preço total
+                    celulaNome.textContent = Produto.nomeProd;
+                    celulaQuantidade.innerHTML = `<input id="qtdProd-${index}" type="number" value="${Produto.qtdProd}" >`;
+                    celulaPrecoUnitario.textContent = Produto.prcUnitProd; // Preenche o preço unitário
+                    celulaPrecoTotal.textContent = Produto.preco_total; // Preenche o preço total
                 });
     
                 // Mostre o modal

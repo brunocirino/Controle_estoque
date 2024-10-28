@@ -13,6 +13,20 @@ function TrazerTodosClientes() {
     });
 }
 
+function formatCPF(cpf) {
+    
+    cpf = cpf.replace(/\D/g, "");
+    
+    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
+function formatPhone(phone) {
+    
+    phone = phone.replace(/\D/g, "");
+    
+    return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1)$2-$3");
+}
+
 function preencherTabela(data) {
     // Converter a resposta JSON em um array de objetos
     var Clientes = JSON.parse(data);
@@ -23,7 +37,7 @@ function preencherTabela(data) {
     // Limpar o corpo da tabela antes de adicionar os novos dados
     tbody.innerHTML = '';
 
-    // Iterar sobre os produtos e adicionar linhas à tabela
+    // Iterar sobre os clientes e adicionar linhas à tabela
     Clientes.forEach(function(Cliente, index) {
         var newRow = document.createElement('tr');
         newRow.classList.add('linha' + (index + 1));
@@ -31,11 +45,17 @@ function preencherTabela(data) {
         newRow.setAttribute('data-id-end', Cliente['id_end']);
         newRow.setAttribute('data-cod-cli', Cliente['codCli']);
 
-        // Criar células para cada propriedade do usuario e preencher com os dados
+        // Criar células para cada propriedade do cliente e preencher com os dados
         var keys = ['codCli', 'cpfCli', 'nomeCli', 'emailCli', 'fone', 'id_end'];
         keys.forEach(function(key) {
             var newCell = document.createElement('td');
-            newCell.textContent = Cliente[key];
+            if (key === 'cpfCli') {
+                newCell.textContent = formatCPF(Cliente[key]);
+            } else if (key === 'fone') {
+                newCell.textContent = formatPhone(Cliente[key]);
+            } else {
+                newCell.textContent = Cliente[key];
+            }
             newRow.appendChild(newCell);
         });
 
@@ -43,7 +63,6 @@ function preencherTabela(data) {
         tbody.appendChild(newRow);
     });
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
     TrazerTodosClientes();

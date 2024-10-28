@@ -51,17 +51,17 @@
             return false;
         }
 
-        public function excluir_usuario($codigo){    
-
+        public function excluir_usuario($codigo) {    
             $delete = $this->banco->prepare("DELETE FROM usuarios WHERE codigo=?");
             $codigoUser = array($codigo);
-
-            if($delete->execute($codigoUser)){
-                return true;
-            }
         
-            return false;
+            $delete->execute($codigoUser);
+        
+            // Verifica se alguma linha foi afetada
+            return $delete->rowCount() > 0;  // Retorna true se um usuário foi excluído, false caso contrário
         }
+        
+        
 
         public function ConsultarIDUsuario($login){    
 

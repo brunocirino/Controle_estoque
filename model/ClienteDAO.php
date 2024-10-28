@@ -10,17 +10,25 @@ require_once("EnderecoDAO.php");
         }
 
         public function cadastrarCliente($cliente){
-
-            $inserir = $this->banco->prepare("INSERT INTO clientes (codCli, cpfCli, nomeCli, emailCli, fone, id_end) VALUES (?,?,?,?,?,?);");
-
-            $novo_cliente = array($cliente->get_nome(), $cliente->get_cpfCli(), $cliente->get_nome(), $cliente->get_emailCli(),$cliente->get_telefone(), $cliente->get_id_end());
-
-            if($inserir->execute($novo_cliente)){
+            $inserir = $this->banco->prepare("INSERT INTO clientes (cpfCli, nomeCli, emailCli, fone, id_end) VALUES (?, ?, ?, ?, ?);");
+        
+            // Array ajustado para corresponder à ordem dos parâmetros no SQL
+            $novo_cliente = array(
+                $cliente->get_cpfCli(),     // cpfCli
+                $cliente->get_nome(),       // nomeCli
+                $cliente->get_emailCli(),   // emailCli
+                $cliente->get_telefone(),   // fone
+                $cliente->get_id_end()      // id_end
+            );
+        
+            // Execução da query com o array atualizado
+            if ($inserir->execute($novo_cliente)) {
                 return true;
             }
-            
+        
             return false;
         }
+        
 
         
         public function TrazerTodosClientes(){
@@ -79,6 +87,42 @@ require_once("EnderecoDAO.php");
             }
         
             return false;
+        }
+
+        public function ConsultarNome($codCli) {
+            $consulta = $this->banco->prepare('
+                SELECT 
+                    nomeCli
+                FROM 
+                    clientes 
+                WHERE 
+                    codCli = :codCli
+            ');
+        
+            $consulta->bindValue(':codCli', $codCli);
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        
+            // Retorna o preço do primeiro resultado, se houver, ou null caso contrário
+            return !empty($resultados) ? $resultados[0]['nomeCli'] : null;
+        }
+
+        public function ConsultarCPF($codCli) {
+            $consulta = $this->banco->prepare('
+                SELECT 
+                    cpfCli
+                FROM 
+                    clientes 
+                WHERE 
+                    codCli = :codCli
+            ');
+        
+            $consulta->bindValue(':codCli', $codCli);
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        
+            // Retorna o preço do primeiro resultado, se houver, ou null caso contrário
+            return !empty($resultados) ? $resultados[0]['cpfCli'] : null;
         }
     
     }

@@ -1,9 +1,6 @@
 <?php
 
-    define('HOST', 'localhost');
-    define('USER', 'root');
-    define('PASSWORD', '');
-    define('DB_NAME', 'controle_estoque');
+require_once("UserDAO.php"); ;
 
     class ProdutosDAO{
 
@@ -113,6 +110,26 @@
             return $resultados;
         }
 
+        public function ConsultarPreco_unit_prod($codProd) {
+            $consulta = $this->banco->prepare('
+                SELECT 
+                    preco
+                FROM 
+                    produtos 
+                WHERE 
+                    id_identificador = :id_identificador
+                GROUP BY id_identificador
+            ');
+        
+            $consulta->bindValue(':id_identificador', $codProd);
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        
+            // Retorna o preço do primeiro resultado, se houver, ou null caso contrário
+            return !empty($resultados) ? $resultados[0]['preco'] : null;
+        }
+        
+
         public function Consultarid_identificadorMax() {
             // Prepara a consulta para selecionar o maior id_identificador
             $consulta = $this->banco->prepare('SELECT MAX(id_identificador) AS max_id FROM produtos');
@@ -174,11 +191,9 @@
             $delete = $this->banco->prepare("DELETE FROM produtos WHERE id_identificador=?");
             $codigoProduto= array($codProd);
 
-            if($delete->execute($codigoProduto)){
-                return true;
-            }
+            $delete->execute($codigoProduto);
         
-            return false;
+            return $delete->rowCount() > 0; 
         }
     }
 

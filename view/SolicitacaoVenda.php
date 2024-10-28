@@ -94,7 +94,7 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <input type="text" class="product-id" placeholder="Digite o codigo da PO" required>
             </div>
             <div class="titulo">
-                <h1>Solicitaçôes de compra</h1>
+                <h1>Solicitaçôes de venda</h1>
             </div>
             <div class="row-buttons">
                 <button id="btn-entregue">Entregue</button>
@@ -110,9 +110,10 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                     <tr>
                         <th>codigo</th>
                         <th>titulo</th>
-                        <th>Fornecedor</th>
+                        <th>Nome cliente</th>
+                        <th>Nome produto</th>
+                        <th>Quantidade</th>
                         <th>Preço total</th>
-                        <th>Prioridade</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -136,14 +137,14 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <input type="text" id="edit-titulo" name="edit-titulo">
             </div>
 
-            <div class="Fornecedor-select">
-                <label for="edit-Fornecedor">Fornecedor:</label>
-                <select id="edit-Fornecedor" name="Fornecedor[]" multiple></select>
+            <div class="Produtos-select">
+                <label for="edit-Produtos">Produtos:</label>
+                <select id="edit-Produtos" name="Produtos[]" multiple></select>
             </div>
 
-            <div class="Material-select">
-                <label for="edit-materiais">Materiais:</label>
-                <select id="edit-materiais" name="materiais[]" multiple></select>
+            <div class="Cliente-select">
+                <label for="edit-Cliente">Cliente:</label>
+                <select id="edit-Cliente" name="Cliente[]" multiple></select>
             </div>
 
             <div id="quantidade-container"></div>
@@ -178,37 +179,37 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <input type="text" id="view-titulo" name="view-titulo" readonly>
             </div>
             <div>
-                <label for="view-Fornecedor">Fornecedor:</label>
-                <input type="text" id="view-Fornecedor" name="view-Fornecedor" readonly>
+                <label for="view-cliente">Nome do cliente:</label>
+                <input type="text" id="view-cliente" name="view-cliente" readonly>
+            </div>
+            <div>
+                <label for="view-cpf-client">CPF do cliente:</label>
+                <input type="text" id="view-cpf-cliente" name="view-cpf-client" readonly>
             </div>
             <div>
                 <label for="view-preco-total">Preço total:</label>
                 <input type="text" id="view-preco-total" name="view-preco-total" readonly>
             </div>
             <div>
-                <label for="view-nf">Numero NF:</label>
-                <input type="text" id="view-nf" name="view-nf" readonly>
-            </div>
-            <div>
-                <label for="view-prioridade">Prioridade:</label>
-                <input type="text" id="view-prioridade" name="view-prioridade" readonly>
-            </div>
-            <div>
                 <label for="view-status">Status:</label>
                 <input type="text" id="view-status" name="view-status" readonly>
             </div>
+            <div>
+                <label for="view-nf">Numero NF:</label>
+                <input type="text" id="view-nf" name="view-nf" readonly>
+            </div>
         </form>
-        <h3>Materiais</h3>
-        <table id="materiais-table">
+        <h3>Produtos</h3>
+        <table id="produtos-table">
             <thead>
                 <tr>
-                    <th>Material</th>
+                    <th>Produto</th>
                     <th>Quantidade</th>
                     <th>Valor unitário</th>
                     <th>Valor total</th>
                 </tr>
             </thead>
-            <tbody id="materiais-body">
+            <tbody id="produtos-body">
                 <!-- Linhas de materiais serão inseridas aqui -->
             </tbody>
         </table>
@@ -219,10 +220,10 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
 
 
 <script src="../assets/js/Menu_lateral_Home.js"></script>
-<script type="module" src="../assets/js/ProdutoSelectMaterial.js"></script>
-<script type="module" src="../assets/js/ProdutoSelectFornecedor.js"></script>
-<script src="../assets/js/TrazerTodaSolicitacao.js"></script>
-<script src="../assets/js/AlterarExcluirPoCompra.js"></script> 
-<script src="../assets/js/viewDetalhesPOCompra.js"></script>
+<script type="module" src="../assets/js/ProdutoSelectProduto.js"></script>
+<script type="module" src="../assets/js/ProdutoSelectCliente.js"></script>
+<script src="../assets/js/TrazerTodaSolicitacaoVenda.js"></script>
+<script src="../assets/js/AlterarExcluirPoVenda.js"></script> 
+<script src="../assets/js/viewDetalhesPOVenda.js"></script>
 </body>
 </html>

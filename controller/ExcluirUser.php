@@ -6,7 +6,9 @@ require_once('../model/userDAO.php');
 
     $AlterarUser = new UserDAO();
     
-    $AlterarUser->excluir_usuario($Codigo);
+    $resultado = $AlterarUser->excluir_usuario($Codigo);
+
+    echo json_encode(["success" => $resultado]);
 
   ?> 
    
