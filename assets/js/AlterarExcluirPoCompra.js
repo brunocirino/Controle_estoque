@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var CodigoPO = document.querySelector('.product-id').value;
         let status = "Entregue";
         let materiais = [];
+
+        
     
         // Primeira requisição: ConsultarPoCompra.php
         $.ajax({
@@ -43,7 +45,19 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             success: function(responseMat) {
                 console.log("AQui", responseMat);
+
                 let dados = typeof responseMat === "string" ? JSON.parse(responseMat) : responseMat;
+
+                if (dados.length === 0) {
+                    alert('Não existe nenhuma solicitação de compra com esse id');
+                    return;  // Interrompe a execução do restante do código
+                }
+    
+                // Verifica o status do primeiro item no array
+                if (dados[0].status === "Entregue") {
+                    alert('Solicitação de compra já entregue!');
+                    return;
+                }
                 
                 // Processa os dados retornados da consulta
                 dados.forEach(function(item) {
@@ -59,9 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         'qtdMat': qtdMat 
                     });
                 });
-    
-                // Segunda requisição: ConcluirPoCompra.php (apenas após processar os materiais)
-                console.log("Materiais prontos para envio:", materiais);
                 if (CodigoPO) {
                     $.ajax({
                         url: '../controller/ConcluirPoCompra.php',
@@ -73,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         success: function(response) {
                             console.log('Requisição AJAX bem sucedida:', response);
-                            alert("Solicitação de compra adicionada com sucesso!");
+                            alert("Solicitação de compra entregue com sucesso!");
                             window.location.href = "../view/SolicitacaoCompra.php";
                         },
                         error: function(xhr, status, error) {
@@ -103,6 +114,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
                     var detalhes = JSON.parse(response);
+
+                    if (detalhes[0] == undefined) {
+                        alert('Não existe nenhuma solicitação de compra com esse id');
+                        return;  // Interrompe a execução do restante do código
+                    }
     
                     // Preencha o modal com os detalhes recebidos
                     document.getElementById('view-Codigo').value = detalhes[0].id_identificador;
@@ -178,6 +194,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let materiais = [];
         let selectMateriais = document.querySelectorAll('#edit-materiais option:checked'); // Seleciona os materiais selecionados
 
+      
+
         selectMateriais.forEach(option => {
             let idMaterial = option.value; // ID do material
             let nomeMaterial = option.textContent; // Nome do material
@@ -195,6 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log(materiais); // Exibe o array de materiais com nome e quantidade
 
+        if (!materiais ||
+            !fornecedores || !tituloSolicitacao || !prioridadeSolicitacao || !materiais[0].qtd_material
+        ) {
+            
+            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+            return; 
+            }
 
     
         // Verifica se estamos em modo de edição ou adição
@@ -256,6 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let materiais = [];
         let linhas = document.querySelectorAll('#materiais-body tr'); // Seleciona todas as linhas da tabela
 
+        
+
         linhas.forEach((linha, index) => {
             let nomeMaterial = linha.querySelector(`#nomeMat-${index}`).value; // Captura o valor do nome do material
             let qtdMaterial = linha.querySelector(`#qtdMat-${index}`).value; // Captura o valor da quantidade
@@ -274,6 +301,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 'preco_total': precoTotal
             });
         });
+
+        if (!tituloSolicitacao || !prioridadeSolicitacao || !nf || !idForn || !status || !materiais[0].nome_material || !materiais[0].qtd_material
+        ) {
+            
+            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+            return;  // Interrompe a execução se algum campo estiver vazio
+            }
             // Editar solicitação
             $.ajax({
                 url: '../controller/AlterarPoCompra.php',
@@ -289,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
+                    alert('Solicitação de compra alterada com sucesso!')
                     window.location.href = "../view/SolicitacaoCompra.php";
                 },
                 error: function(xhr, status, error) {
@@ -307,6 +342,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { id_identificador: CodigoPO },
                     success: function(response) {
+
+                        if (!response.success) {  // Verifica o campo "success" no JSON
+                            alert('Não existe nenhuma solicitação de compra com esse id');
+                            return;
+                        }
+
                         console.log('Material excluído com sucesso:', response);
                         alert("Excluído ou inativado com sucesso!");
                         window.location.href = "../view/SolicitacaoCompra.php";

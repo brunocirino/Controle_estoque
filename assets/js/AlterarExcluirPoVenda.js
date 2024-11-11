@@ -103,6 +103,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
                     var detalhes = JSON.parse(response);
+
+                    if (detalhes[0] == undefined) {
+                        alert('Não existe nenhuma solicitação de venda com esse id');
+                        return;  // Interrompe a execução do restante do código
+                    }
     
                     // Preencha o modal com os detalhes recebidos
                     document.getElementById('view-Codigo').value = detalhes[0].id_identificador;
@@ -170,6 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         console.log(Clientes); // Exibe os clientes selecionados no console para verificação
+
+        
     
         // Captura os produtos selecionados e suas respectivas quantidades
         let produtos = [];
@@ -190,8 +197,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        console.log(produtos); // Exibe o array de produtos com nome e quantidade
+        console.log(produtos); 
 
+        if (Clientes.length === 0 || produtos.length === 0 || !tituloSolicitacao || !produtos[0].qtdProduto) {
+            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+            return;
+        }
 
     
         // Verifica se estamos em modo de edição ou adição
@@ -252,17 +263,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Captura os materiais selecionados e suas respectivas quantidades
         let produtos = [];
-        let linhas = document.querySelectorAll('#produtos-body tr'); // Seleciona todas as linhas da tabela
+        let linhas = document.querySelectorAll('#produtos-body tr'); 
 
         linhas.forEach((linha, index) => {
-            let nomeProduto = linha.querySelector(`#nomeProd-${index}`).value; // Captura o valor do nome do material
-            let qtdProduto = linha.querySelector(`#qtdProd-${index}`).value; // Captura o valor da quantidade
-            let precoUnit = linha.querySelector('td:nth-child(3)').textContent; // Captura o valor unitário
-            let precoTotal = linha.querySelector('td:nth-child(4)').textContent; // Captura o valor total
+            let nomeProduto = linha.querySelector(`#nomeProd-${index}`).value; 
+            let qtdProduto = linha.querySelector(`#qtdProd-${index}`).value; 
+            let precoUnit = linha.querySelector('td:nth-child(3)').textContent;
+            let precoTotal = linha.querySelector('td:nth-child(4)').textContent; 
             let idProd = linha.querySelector(`#nomeProd-${index}`).getAttribute('data-id-produto');
 
-            // Aqui você deve ter uma forma de identificar o id_material
-            // Se você não tem um id_material específico, você pode precisar armazená-lo em algum lugar
 
             produtos.push({
                 'id_prod': idProd,
@@ -274,6 +283,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             console.log(produtos)
         });
+
+        if (
+            !nmCliente || 
+            !cpfCliente || 
+            !tituloSolicitacao || 
+            !status || 
+            !preco_total_PO || 
+            !nf || 
+            produtos.length === 0 || 
+            !produtos[0].qtd_prod ||
+            isNaN(parseFloat(cpfCliente)) || // Verifica se cpfCliente é um número
+            isNaN(parseFloat(preco_total_PO)) || // Verifica se preco_total_PO é um número
+            isNaN(parseFloat(nf)) // Verifica se nf é um número
+        ) {
+            alert('Todos os campos são obrigatórios, devem ser preenchidos, e certos campos devem ser números.');
+            return;
+        }
+        
+
             // Editar solicitação
             $.ajax({
                 url: '../controller/AlterarPoVenda.php',
@@ -290,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
+                    alert('solicitação de venda alterada com sucesso!')
                     window.location.href = "../view/SolicitacaoVenda.php";
                 },
                 error: function(xhr, status, error) {

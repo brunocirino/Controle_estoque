@@ -32,27 +32,41 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             data: { quantidade: Quantidade, id_identificador: id_identificador, Entrada: isEntradaMode },
             success: function(response) {
-                var jsonResponse = typeof response === "string" ? JSON.parse(response) : response;
+                try {
+                    // Tenta fazer o parse da resposta como JSON
+                    var jsonResponse = typeof response === "string" ? JSON.parse(response) : response;
     
-                if (jsonResponse.erro) {
-                    console.error('Erro no processamento:', jsonResponse.erro);
-                    alert(jsonResponse.erro); // Exibe o erro ao usuário
-                    window.location.href = "../view/Estoque.php"; 
-                } else {
-                    console.log('Requisição AJAX bem-sucedida:', jsonResponse);
-                    
-                    // Verifica se existem avisos e exibe um por um
-                    if (jsonResponse.avisos && jsonResponse.avisos.length > 0) {
-                        jsonResponse.avisos.forEach(function(aviso) {
-                            alert(aviso); // Exibe cada aviso
-                        });
+                    // Se a resposta JSON tiver um erro, mostra o erro
+                    if (jsonResponse.erro) {
+                        console.error('Erro no processamento:', jsonResponse.erro);
+                        alert(jsonResponse.erro);
+                        window.location.href = "../view/Estoque.php"; 
+                    } else {
+                        console.log('Requisição AJAX bem-sucedida:', jsonResponse);
+    
+                        // Verifica se existem avisos e exibe um por um
+                        if (jsonResponse.avisos && jsonResponse.avisos.length > 0) {
+                            jsonResponse.avisos.forEach(function(aviso) {
+                                alert(aviso); // Exibe cada aviso
+                            });
+                        }
+                        if(isEntradaMode){
+                            alert('Entrada realizada com sucesso!');
+                        } else {
+                            alert('Perda realizada com sucesso!');
+                        }
+                        
+                        window.location.href = "../view/Estoque.php"; // Redireciona em caso de sucesso
                     }
-                    
-                    window.location.href = "../view/Estoque.php"; // Redireciona em caso de sucesso
+                } catch (e) {
+                    // Se JSON.parse falhar, exibe uma mensagem informativa
+                    console.error('Erro ao processar a resposta. A resposta não está em formato JSON válido:', e);
+                    alert("Produto com esse ID não existe");
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Erro na requisição AJAX:', error);
+                alert("Erro na comunicação com o servidor. Tente novamente mais tarde.");
             }
         });
     });

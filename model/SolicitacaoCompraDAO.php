@@ -34,11 +34,9 @@ require_once("UserDAO.php");
                 FROM pedidocompra c
                 JOIN fornecedores f ON c.id_forn = f.id
                 GROUP BY 
-                    c.Titulo, 
-                    c.Prioridade, 
-                    c.status, 
-                    c.id_identificador, 
-                    f.nomeFantasia;');
+                    c.id_identificador
+                ORDER BY 
+                    c.id_identificador;');
             $consulta->execute();
             $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
             return $resultados;
@@ -53,7 +51,7 @@ require_once("UserDAO.php");
                 JOIN fornecedores f ON p.id_forn = f.id
                 JOIN materiais m ON p.id_mat = m.codMat
                 WHERE p.id_identificador = :codPO
-                GROUP BY p.Titulo, p.id_identificador, p.status, p.id_mat, p.id_forn, p.Prioridade, f.nomeFantasia, m.nomeMat, p.qtdMat, p.preco_unit, p.preco_total
+                GROUP BY p.id_identificador, p.id_mat
                 ');
                 $consulta->bindValue(':codPO',$codPO);
                 $consulta->execute();
@@ -162,13 +160,11 @@ require_once("UserDAO.php");
         public function excluir_Po_Compra($id_identificador){    
 
             $delete = $this->banco->prepare("DELETE FROM pedidocompra WHERE id_identificador=?");
-            $codigoMaterial= array($id_identificador);
+            $codiPOcompra= array($id_identificador);
 
-            if($delete->execute($codigoMaterial)){
-                return true;
-            }
+            $delete->execute($codiPOcompra);
         
-            return false;
+            return $delete->rowCount() > 0; 
         }
     
     }

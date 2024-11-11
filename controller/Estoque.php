@@ -50,7 +50,7 @@ foreach ($materiais as &$material) {
     }
 
     // Verifica se a nova quantidade após a operação ficará abaixo do estoque mínimo
-    $nova_qtd = $EntradaMode ? $qtd_atual + $quantidadeTotal : $qtd_atual - $quantidadeTotal;
+    $nova_qtd = $EntradaMode ? $qtd_atual - $quantidadeTotal : $qtd_atual + $quantidadeTotal;
     if ($nova_qtd < $estoqueMin) {
         $avisos[] = "Atenção: Estoque do material ID: $id_material ficará abaixo do mínimo após atualização.";
     }

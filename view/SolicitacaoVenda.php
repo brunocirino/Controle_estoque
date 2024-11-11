@@ -111,8 +111,6 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                         <th>codigo</th>
                         <th>titulo</th>
                         <th>Nome cliente</th>
-                        <th>Nome produto</th>
-                        <th>Quantidade</th>
                         <th>Preço total</th>
                         <th>Status</th>
                     </tr>
