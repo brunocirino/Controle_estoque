@@ -18,9 +18,22 @@ function logError($message) {
 
     $produtos = isset($_POST['produtos']) ? json_decode($_POST['produtos'], true) : [];
 
+    $clientes = isset($_POST['clientes']) ? json_decode($_POST['clientes'], true) : [];
+
+    foreach ($produtos as $index =>$produto) {
+        $Valor_total = 0;
+        $preco_unit = $produto['preco_unit'];
+        $qtdprodutos = $produto['qtdProduto'];
+
+        $Valor_total += $preco_unit * (int)$qtdprodutos;
+
+        $preco_total_PO = $Valor_total;
+
+    };
+
     $SolicitacaoVendaDAO = new SolicitacaoVendaDAO();
     
-    $SolicitacaoVendaDAO->Atualizar_PoVenda($CodPo, $titulo, $NF, $produtos, $Status, $preco_total_PO);
+    $SolicitacaoVendaDAO->Atualizar_PoVenda($CodPo, $titulo, $NF, $produtos, $clientes, $Status, $preco_total_PO);
 
     echo '<script type="text/javascript">
         alert("Produto alterado com sucesso");

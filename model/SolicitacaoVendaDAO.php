@@ -24,7 +24,8 @@ require_once("UserDAO.php");
         public function TrazerTodaSolicitacao() {
             $consulta = $this->banco->prepare('SELECT p.Titulo, p.nomeCliente, p.cpfCliente, p.NR_NF, p.preco_total_PO, p.nomeProd, p.qtdProd, p.preco_total, p.status, p.id_identificador
             FROM pedidovenda as p
-            GROUP BY p.id_identificador');
+            GROUP BY p.id_identificador
+            ORDER BY p.id_identificador');
             $consulta->execute();
             $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
             return $resultados;
@@ -32,7 +33,7 @@ require_once("UserDAO.php");
         
 
         public function ConsultarPoVenda($codPO) {
-            $consulta = $this->banco->prepare('SELECT *, c.codCli FROM pedidovenda pv INNER JOIN clientes c ON pv.cpfCliente = c.cpfCli WHERE id_identificador = :codPO');
+            $consulta = $this->banco->prepare('SELECT *, c.codCli FROM pedidovenda pv INNER JOIN clientes c ON pv.cpfCliente = c.cpfCli WHERE id_identificador = :codPO GROUP BY pv.id_identificador, pv.codProd');
             $consulta->bindValue(':codPO', $codPO);
             $consulta->execute();
             $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -40,47 +41,102 @@ require_once("UserDAO.php");
         }
         
 
-        public function Atualizar_PoVenda($id_identificador, $titulo, $NF, $Produtos, $Status, $preco_total_PO) {
+        public function Atualizar_PoVenda($id_identificador, $titulo, $NF, $Produtos, $clientes, $Status, $preco_total_PO) {
+            // Caminho do arquivo de log
+            $logFile = 'C:\\Users\\bruno\\OneDrive\\Área de Trabalho\\Log_Erro_TCC\\Log_Erro_TCC.txt';
+            
             // Inicia uma transação
             $this->banco->beginTransaction();
-        
+            
             try {
+                // Log inicial com todas as informações recebidas
+                $logMessage = "[" . date('Y-m-d H:i:s') . "] Iniciando atualização de PO.\n";
+                $logMessage .= "Dados recebidos:\n";
+                $logMessage .= "ID Identificador: $id_identificador\n";
+                $logMessage .= "Título: $titulo\n";
+                $logMessage .= "NF: $NF\n";
+                $logMessage .= "Status: $Status\n";
+                $logMessage .= "Preço Total PO: $preco_total_PO\n";
+                
+                // Log de clientes
+                $logMessage .= "Clientes:\n";
+                foreach ($clientes as $cliente) {
+                    $logMessage .= sprintf("  - ID Cliente: %s, Nome: %s, CPF: %s\n", $cliente['id_cliente'], $cliente['nmCli'], $cliente['cpfCli']);
+                }
+        
+                // Log de produtos
+                $logMessage .= "Produtos:\n";
+                foreach ($Produtos as $produto) {
+                    $logMessage .= sprintf(
+                        "  - ID: %s, Nome: %s, QTD: %s, Preço Unit: %s, Preço Total: %s\n",
+                        $produto['idProduto'],
+                        $produto['nomeProduto'],
+                        $produto['qtdProduto'],
+                        $produto['preco_unit'],
+                        $produto['preco_total']
+                    );
+                }
+                file_put_contents($logFile, $logMessage, FILE_APPEND);
+        
                 // 1. Excluir todos os materiais antigos associados ao pedido
                 $deletePoCompra = $this->banco->prepare("DELETE FROM pedidovenda WHERE id_identificador = ?");
                 $deletePoCompra->execute(array($id_identificador));
+                file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Materiais antigos removidos para o ID: $id_identificador.\n", FILE_APPEND);
                 
-                $sql = "INSERT INTO pedidovenda (Titulo,codProd, nomeProd, qtdProd, prcUnitProd, preco_total, preco_total_PO, NR_NF, status, id_identificador) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-                // Prepara a consulta
-                $inserir = $this->banco->prepare($sql);
-
-                // Percorre cada material e executa o INSERT
-                foreach ($Produtos as $produto) {
-                    $inserir->execute([
-                        $titulo,                       
-                        $produto['id_prod'],       
-                        $produto['nome_prod'],  
-                        $produto['qtd_prod'],    
-                        $produto['preco_unit'],
-                        $produto['preco_total'],
-                        $preco_total_PO, 
-                        $NF,
-                        $Status, 
-                        $id_identificador,         
-                    ]);
+                // 2. Inserir novos produtos para o pedido
+                $sqlProduto = "INSERT INTO pedidovenda (Titulo, nomeCliente, cpfCliente, codProd, nomeProd, qtdProd, prcUnitProd, preco_total, preco_total_PO, NR_NF, status, id_identificador) 
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                
+                $inserirProduto = $this->banco->prepare($sqlProduto);
+        
+                // Percorrer os clientes e produtos para associá-los corretamente
+                foreach ($clientes as $cliente) {
+                    foreach ($Produtos as $produto) {
+                        // Log de inserção de produto e cliente
+                        $logMessage = sprintf(
+                            "[" . date('Y-m-d H:i:s') . "] Inserindo produto e cliente: Cliente ID=%s, Produto ID=%s, Nome Produto=%s, QTD=%s, Preço Unit=%s, Preço Total=%s.\n",
+                            $cliente['id_cliente'],
+                            $produto['idProduto'],
+                            $produto['nomeProduto'],
+                            $produto['qtdProduto'],
+                            $produto['preco_unit'],
+                            $produto['preco_total']
+                        );
+                        file_put_contents($logFile, $logMessage, FILE_APPEND);
+        
+                        // Inserir os dados do produto e cliente no banco
+                        $inserirProduto->execute([
+                            $titulo, // Título
+                            $cliente['nmCli'], // Nome do Cliente
+                            $cliente['cpfCli'], // CPF do Cliente
+                            $produto['idProduto'], // ID do Produto
+                            $produto['nomeProduto'], // Nome do Produto
+                            $produto['qtdProduto'], // Quantidade do Produto
+                            $produto['preco_unit'], // Preço Unitário
+                            $produto['preco_total'], // Preço Total
+                            $preco_total_PO, // Preço Total PO
+                            $NF, // Número da Nota Fiscal
+                            $Status, // Status
+                            $id_identificador, // ID do Pedido
+                        ]);
+                    }
                 }
-
+        
                 // Confirma a transação
                 $this->banco->commit();
+                file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Atualização de PO concluída com sucesso para o ID: $id_identificador.\n", FILE_APPEND);
                 return true;
         
             } catch (Exception $e) {
                 // Reverte a transação em caso de erro
                 $this->banco->rollBack();
+                $errorMessage = "[" . date('Y-m-d H:i:s') . "] Erro ao atualizar PO: " . $e->getMessage() . "\n";
+                file_put_contents($logFile, $errorMessage, FILE_APPEND);
                 return false;
             }
         }
+        
+        
         
         public function Concluir($id_identificador, $materiais, $Status) {
             try {

@@ -121,6 +121,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-status').value = detalhes[0].status;
                     document.getElementById('edit-nf').value = detalhes[0].NR_NF;
 
+                    document.getElementById('edit-preco-total').removeAttribute('readonly');
+                    document.getElementById('edit-status').removeAttribute('readonly');
+                    document.getElementById('edit-nf').removeAttribute('readonly');
+
+
+
                     var campoProduto = document.getElementById('edit-Produtos');
                     
 
@@ -186,114 +192,145 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    function carregarProdutos(Codigo, selectProdutos, selectClientes, preco_total_PO) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '../controller/ConsultarPoVenda.php',
+                method: 'POST',
+                data: { Codigo }, // Passando o código do material como parâmetro
+                success: function(response) {
+                    let produtos = [];
+                    let clientes = [];
+                    let ProdutosData = typeof response === 'string' ? JSON.parse(response) : response;
+    
+                    // Processa os produtos
+                    selectProdutos.forEach(option => {
+                        let idProduto = option.value; // ID do produto
+                        let nomeProduto = option.textContent; // Nome do produto
+    
+                        // Captura a quantidade para o produto específico
+                        let qtdProdutoInput = document.querySelector(`#quantidade-${idProduto}`);
+                        let qtdProduto = qtdProdutoInput ? qtdProdutoInput.value : 0;
+    
+                        let ProdutoInfo = ProdutosData.find(Produto => Produto.codProd === idProduto);
+    
+                        produtos.push({
+                            'idProduto': idProduto,
+                            'nomeProduto': nomeProduto,
+                            'preco_unit': ProdutoInfo ? ProdutoInfo.prcUnitProd : null,
+                            'qtdProduto': qtdProduto,
+                            'preco_total': preco_total_PO
+                        });
+                    });
+                    
+                    selectClientes.forEach(option => {
+                        let idCliente = option.value; // ID do produto
+                        let nomeCliente = option.textContent; // Nome do produto
+
+    
+                        let ClienteInfo = ProdutosData.find(Cliente => Cliente.codCli === idCliente);
+    
+                        clientes.push({
+                            'id_cliente': idCliente,
+                            'nmCli': nomeCliente,
+                            'cpfCli': ClienteInfo ? ClienteInfo.cpfCli : null,
+                        });
+                    });
+
+                    const data = {
+                        produtos: produtos,
+                        clientes: clientes
+                    };
+    
+                    console.log("Produtos:", JSON.stringify(produtos, null, 2));
+                    console.log("Clientes:", JSON.stringify(clientes, null, 2));
+    
+                    resolve(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar produtos:', error);
+                    reject(error);
+                }
+            });
+        });
+    }
+    
 
     btnSalvar.addEventListener('click', function(event) {
         event.preventDefault(); // Previne o comportamento padrão do botão
         console.log(isEditMode)
-    
-        // Captura os valores dos campos do modal
+
+        let CodSolicitacao = document.querySelector('.product-id').value;
         let tituloSolicitacao = document.getElementById('edit-titulo').value;
+        let preco_total_PO = document.getElementById('edit-preco-total').value;
+        let status = document.getElementById('edit-status').value;
+        let nf = document.getElementById('edit-nf').value;
+        let prioridadeSolicitacao = document.getElementById('edit-prioridade').value;
 
-        let Clientes = [];
-        let selectClientes = document.getElementById('edit-Cliente'); // Certifique-se de selecionar o elemento correto
 
-        for (let i = 0; i < selectClientes.selectedOptions.length; i++) {
-            let id_Cliente = selectClientes.selectedOptions[i].value;
-            Clientes.push({
-                'id_cliente': id_Cliente
-            });
-        }
-
-        console.log(Clientes); // Exibe os clientes selecionados no console para verificação
-
-        
-    
-        // Captura os produtos selecionados e suas respectivas quantidades
-        let produtos = [];
         let selectProdutos = document.querySelectorAll('#edit-Produtos option:checked'); // Seleciona os produtos selecionados
 
-        selectProdutos.forEach(option => {
-            let idProduto = option.value; // ID do produto
-            let nomeProduto = option.textContent; // Nome do produto
+        let selectClientes = document.querySelectorAll('#edit-Cliente option:checked'); // Seleciona os produtos selecionados
 
-            // Captura a quantidade para o produto específico
-            let qtdProdutoInput = document.querySelector(`#quantidade-${idProduto}`);
-            let qtdProduto = qtdProdutoInput ? qtdProdutoInput.value : 0;
+        carregarProdutos(CodSolicitacao, selectProdutos, selectClientes, preco_total_PO)
+            .then(({ produtos, clientes})  => {
+            // Verifica se estamos em modo de edição ou adição
+            if (isEditMode) {
 
-            produtos.push({
-                'idProduto': idProduto,
-                'nomeProduto': nomeProduto,
-                'qtdProduto': qtdProduto
-            });
-        });
-
-        console.log(produtos); 
-
-        if (Clientes.length === 0 || produtos.length === 0 || !tituloSolicitacao || !produtos[0].qtdProduto) {
-            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
-            return;
-        }
-
-    
-        // Verifica se estamos em modo de edição ou adição
-        if (isEditMode) {
-            var CodigoPO = document.querySelector('.product-id').value;
-
-            let tituloSolicitacao = document.getElementById('edit-titulo').value;
-            let status = document.getElementById('edit-status').value;
-            let preco_total_PO =  document.getElementById('edit-preco-total').value;
-            let nf = document.getElementById('edit-nf').value;
-
-            console.log(nf);
-        
-            // Captura os materiais selecionados e suas respectivas quantidades
-            let produtos = [];
-            let linhas = document.querySelectorAll('#produtos-body tr'); 
-
-            linhas.forEach((linha, index) => {
-                let nomeProduto = linha.querySelector(`td:nth-child(1)`).value; 
-                let qtdProduto = linha.querySelector(`#qtdProd-${index}`).value; 
-                let precoUnit = linha.querySelector('td:nth-child(3)').textContent;
-                let precoTotal = qtdProduto * precoUnit;
-                let idProd = linha.querySelector(`#nomeProd-${index}`).getAttribute('data-id-produto');
-
-
-                produtos.push({
-                    'id_prod': idProd,
-                    'nome_prod': nomeProduto,
-                    'qtd_prod': qtdProduto,
-                    'preco_unit': precoUnit,
-                    'preco_total': precoTotal
+                if (
+                    produtos.length === 0 ||
+                    !produtos.every(item => item.qtdProduto && item.qtdProduto.trim()) ||
+                    clientes.length === 0 ||
+                    !tituloSolicitacao.trim() || 
+                    !preco_total_PO.trim() ||
+                    !nf.trim() ||
+                    !status.trim()
+                ) {
+                    alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+                    return;
+                }
+                    // Editar solicitação
+                    $.ajax({
+                        url: '../controller/AlterarPoVenda.php',
+                        method: 'POST',
+                        data: {
+                            Codigo: CodSolicitacao,
+                            NF: nf,
+                            Titulo: tituloSolicitacao,
+                            preco_total_PO: preco_total_PO,
+                            Status: status,
+                            produtos: JSON.stringify(produtos),
+                            clientes: JSON.stringify(clientes), 
+                        },
+                        success: function(response) {
+                            console.log('Requisição AJAX bem sucedida:', response);
+                            alert('solicitação de venda alterada com sucesso!')
+                            window.location.href = "../view/SolicitacaoVenda.php";
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Erro na requisição AJAX:', error);
+                        }
                 });
+            }else{
+                if (
+                    produtos.length === 0 ||
+                    !produtos.every(item => item.qtdProduto && item.qtdProduto.trim()) ||
+                    clientes.length === 0 ||
+                    !tituloSolicitacao.trim() ||
+                    !prioridadeSolicitacao.trim()
 
-                console.log(produtos)
-            });
-
-            if (
-                !tituloSolicitacao || 
-                !status || 
-                !preco_total_PO || 
-                !nf || 
-                !produtos.every(item => item.qtdProd && item.qtdProd.trim()) ||
-                isNaN(parseFloat(preco_total_PO)) || 
-                isNaN(parseFloat(nf)) 
-            ) {
-                alert('Todos os campos são obrigatórios, devem ser preenchidos, e certos campos devem ser números.');
-                return;
-            }
-            
-
-                // Editar solicitação
+                ) {
+                    alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+                    return;
+                }
                 $.ajax({
-                    url: '../controller/AlterarPoVenda.php',
+                    url: '../controller/AddPoVenda.php',
                     method: 'POST',
                     data: {
-                        Codigo: CodigoPO,
-                        NF: nf,
                         Titulo: tituloSolicitacao,
-                        preco_total_PO: preco_total_PO,
+                        Clientes: JSON.stringify(clientes), 
+                        Produtos: JSON.stringify(produtos), 
                         Status: status,
-                        produtos: JSON.stringify(produtos)
                     },
                     success: function(response) {
                         console.log('Requisição AJAX bem sucedida:', response);
@@ -303,29 +340,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     error: function(xhr, status, error) {
                         console.error('Erro na requisição AJAX:', error);
                     }
-             });
-         }else{
-            // Editar solicitação
-            $.ajax({
-                url: '../controller/AddPoVenda.php',
-                method: 'POST',
-                data: {
-                    Titulo: tituloSolicitacao,
-                    Clientes: JSON.stringify(Clientes),
-                    Produtos: JSON.stringify(produtos),
-                    Status: status,
-                },
-                success: function(response) {
-                    console.log('Requisição AJAX bem sucedida:', response);
-                    alert('solicitação de venda alterada com sucesso!')
-                    window.location.href = "../view/SolicitacaoVenda.php";
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erro na requisição AJAX:', error);
-                }
-            });
-         }
-    });
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar produtos:', error.message || error);
+            alert('Erro ao carregar produtos. Verifique os dados.');
+        });
+});
 
     btnSalvarEdit.addEventListener('click', function(event) {
         event.preventDefault(); // Previne o comportamento padrão do botão
