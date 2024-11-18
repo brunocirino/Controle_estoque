@@ -124,7 +124,7 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
     </div>
 </div>
 
-<!-- Modal para editar usuário -->
+<!-- Modal para editar SDC -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -141,6 +141,23 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <select id="edit-Fornecedor" name="Fornecedor[]" multiple></select>
             </div>
 
+            <div id="edit-preco-total-div">
+                <label for="edit-preco-total">Preço total:</label>
+                <input type="text" id="edit-preco-total" name="edit-preco-total" >
+            </div>
+            <div id="edit-nf-div">
+                <label for="edit-nf">Numero NF:</label>
+                <input type="text" id="edit-nf" name="edit-nf" >
+            </div>
+            <div id="edit-prioridade-div">
+                <label for="edit-prioridade">Prioridade:</label>
+                <input type="text" id="edit-prioridade" name="edit-prioridade" >
+            </div>
+            <div id="edit-status-div">
+                <label for="edit-status">Status:</label>
+                <input type="text" id="edit-status" name="edit-status" >
+            </div>
+
             <div class="Material-select">
                 <label for="edit-materiais">Materiais:</label>
                 <select id="edit-materiais" name="materiais[]" multiple></select>
@@ -149,8 +166,8 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
             <div id="quantidade-container"></div>
 
             <div class="Prioridade-select">
-                <label for="edit-prioridade">Prioridade:</label>
-                <select id="edit-prioridade" name="edit-prioridade">
+                <label for="edit-prioridade-select">Prioridade:</label>
+                <select id="edit-prioridade-select" name="edit-prioridade-select">
                     <option value="alta">Alta</option>
                     <option value="media">Média</option>
                     <option value="baixa">Baixa</option>
@@ -199,7 +216,7 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
             </div>
         </form>
         <h3>Materiais</h3>
-        <table id="materiais-table">
+        <table id="materiais-table" readonly>
             <thead>
                 <tr>
                     <th>Material</th>

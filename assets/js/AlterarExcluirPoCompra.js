@@ -8,20 +8,34 @@ document.addEventListener('DOMContentLoaded', function() {
     var btnAdicionar = document.getElementById('btn-adicionar');
     var btnEntregue = document.getElementById('btn-entregue');
     var Titulo = document.getElementById('modal-title');
-    var isEditMode = false;  // Variável para rastrear o modo atual
+    var isEditMode = false;  
 
 
-    var campoTitulo = document.getElementById('view-titulo');
-    var campoFornecedor = document.getElementById('view-Fornecedor');
-    var campoPrecoTotal = document.getElementById('view-preco-total');
-    var campoPrioridade = document.getElementById('view-prioridade');
-    var campoStatus = document.getElementById('view-status');
-    var campoNF = document.getElementById('view-nf');
+    var campoTitulo = document.getElementById('edit-titulo');
+    var campoFornecedor = document.getElementById('edit-Fornecedor');
+    var campoMateriais = document.getElementById('edit-materiais');
+    var campoPrecoTotal = document.getElementById('edit-preco-total');
+    var campoPrioridade = document.getElementById('edit-prioridade');
+    var campoStatus = document.getElementById('edit-status');
+    var campoNF = document.getElementById('edit-nf');
 
     btnAdicionar.addEventListener('click', function() {
-        isEditMode = false;  // Definir modo de adição
+        isEditMode = false;  
         modal.style.display = 'block';
         Titulo.textContent = "Adicionar material";
+
+        
+        document.getElementById('edit-titulo').style.display = 'block'; 
+        document.getElementById('edit-prioridade').style.display = 'block'; 
+        document.getElementById('edit-Fornecedor').style.display = 'block'; 
+        document.getElementById('edit-materiais').style.display = 'block'; 
+    
+           
+        document.getElementById('edit-preco-total-div').style.display = 'none'; 
+        document.getElementById('edit-nf-div').style.display = 'none';
+        document.getElementById('edit-status-div').style.display = 'none'; 
+        document.getElementById('edit-prioridade-div').style.display = 'none';
+        
 
         document.getElementById('edit-titulo').value = '';
         document.getElementById('edit-Fornecedor').value = '';
@@ -33,8 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var CodigoPO = document.querySelector('.product-id').value;
         let status = "Entregue";
         let materiais = [];
-
-        
     
         // Primeira requisição: ConsultarPoCompra.php
         $.ajax({
@@ -106,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btnEditar.addEventListener('click', function() {
         isEditMode = true;  // Definir modo de edição
         var CodigoMat = document.querySelector('.product-id').value;
+        
         if (CodigoMat) {
             $.ajax({
                 url: '../controller/ConsultarPoCompra.php',
@@ -119,44 +132,58 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert('Não existe nenhuma solicitação de compra com esse id');
                         return;  // Interrompe a execução do restante do código
                     }
-    
-                    // Preencha o modal com os detalhes recebidos
-                    document.getElementById('view-Codigo').value = detalhes[0].id_identificador;
+
                     campoTitulo.value = detalhes[0].Titulo;
-                    campoFornecedor.value = detalhes[0].nomeFantasia;
+                     // Preencher o campo de Fornecedor com o valor selecionado
+                    var campoFornecedor = document.getElementById('edit-Fornecedor');
+                    var idFornecedorSelecionado = 0;
+                    var idFornecedorSelecionado = detalhes[0].id_forn;
+
+                
+                    // Definir o valor selecionado no campo de fornecedores
+                    for (var i = 0; i < campoFornecedor.options.length; i++) {
+                        if (campoFornecedor.options[i].value == idFornecedorSelecionado) {
+                            campoFornecedor.options[i].selected = true;
+                            break;
+                        }
+                    }
+
+                    // IDs e quantidades dos materiais retornados na resposta da consulta
+                    var idsMateriaisSelecionados = detalhes.map(material => material.id_mat);
+                    var quantidadesMateriais = detalhes.map(material => material.qtdMat);
+
+                    // Marca as opções selecionadas com base nos IDs de materiais retornados
+                    for (var i = 0; i < campoMateriais.options.length; i++) {
+                        var option = campoMateriais.options[i];
+                        if (idsMateriaisSelecionados.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    }
+
+                    // Chama a função de evento manualmente para exibir os campos de quantidade já selecionados
+                    document.getElementById('edit-materiais').dispatchEvent(new Event('change'));
+
+                    // Definir as quantidades nos campos após a geração
+                    const container = document.getElementById('quantidade-container');
+                    idsMateriaisSelecionados.forEach((materialId, index) => {
+                        const campoQuantidade = container.querySelector(`#quantidade-${materialId}`);
+                        if (campoQuantidade) {
+                            campoQuantidade.value = quantidadesMateriais[index];
+                        }
+                    });
+
+
+
                     campoFornecedor.setAttribute('data-id-fornecedor', detalhes[0].id_forn);
                     campoPrecoTotal.value = detalhes[0].total_preco;
                     campoPrioridade.value = detalhes[0].Prioridade;
                     campoStatus.value = detalhes[0].status;
                     campoNF.value = detalhes[0].NR_NF;
-    
-                    // Remover o atributo 'readonly' para permitir edição
-                    campoTitulo.removeAttribute('readonly');
-                    campoFornecedor.removeAttribute('readonly');
-                    campoPrecoTotal.removeAttribute('readonly');
-                    campoPrioridade.removeAttribute('readonly');
-                    campoStatus.removeAttribute('readonly');
-                    campoNF.removeAttribute('readonly');
-    
-                    // Preencher a tabela de materiais
-                    var tabelaMateriais = document.getElementById('materiais-table').getElementsByTagName('tbody')[0];
-                    tabelaMateriais.innerHTML = ''; // Limpa a tabela antes de preencher
-    
-                    detalhes.forEach(function(material, index) {
-                        var novaLinha = tabelaMateriais.insertRow(); // Insere nova linha na tabela
-                        var celulaNome = novaLinha.insertCell(0);
-                        var celulaQuantidade = novaLinha.insertCell(1);
-                        var celulaPrecoUnitario = novaLinha.insertCell(2);
-                        var celulaPrecoTotal = novaLinha.insertCell(3);
-    
-                        celulaNome.innerHTML = `<input id="nomeMat-${index}" type="text" value="${material.nomeMat}" data-id-material="${material.id_mat}" >`;
-                        celulaQuantidade.innerHTML = `<input id="qtdMat-${index}" type="number" value="${material.qtdMat}" >`;
-                        celulaPrecoUnitario.textContent = material.preco_unit; // Preenche o preço unitário
-                        celulaPrecoTotal.textContent = material.preco_total;
-                    });
+
     
                     // Exibir o modal
-                    var modalDetalhes = document.getElementById('viewModal');
+                    var modalDetalhes = document.getElementById('editModal');
+                    document.getElementById('edit-prioridade-select').style.display = 'none';
                     modalDetalhes.style.display = 'block';
                 },
                 error: function(xhr, status, error) {
@@ -167,107 +194,159 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Por favor, digite o código do material.');
         }
     });
+
+
+    function carregarMateriais(Codigo, selectMateriais, precoTotal) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '../controller/ConsultarPoCompra.php',
+                method: 'POST',
+                data: { Codigo }, // Passando o código do material como parâmetro
+                success: function(response) {
+                    let materiais = [];
+                    let materiaisData = typeof response === 'string' ? JSON.parse(response) : response;
+    
+                    selectMateriais.forEach(option => {
+                        let idMaterial = option.value;
+    
+                        // Captura a quantidade para o material específico
+                        let qtdMaterialInput = document.querySelector(`#quantidade-${idMaterial}`);
+                        let qtdMaterial = qtdMaterialInput ? qtdMaterialInput.value : 0;
+    
+                        let materialInfo = materiaisData.find(material => material.id_mat === idMaterial);
+    
+                        materiais.push({
+                            'id_mat': idMaterial,
+                            'preco_unit': materialInfo ? materialInfo.preco_unit : null,
+                            'preco_total': precoTotal,
+                            'qtd_material': qtdMaterial
+                        });
+    
+                    });
+    
+                    resolve(materiais);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar materiais:', error);
+                    reject(error);
+                }
+            });
+        });
+    }
+    
     
 
     btnSalvar.addEventListener('click', function(event) {
-        event.preventDefault(); // Previne o comportamento padrão do botão
-        console.log(isEditMode)
+        event.preventDefault();
     
-        // Captura os valores dos campos do modal
-        let CodSolicitacao = document.getElementById('edit-codigo').value;
+        let CodSolicitacao = document.querySelector('.product-id').value;
         let tituloSolicitacao = document.getElementById('edit-titulo').value;
-        let prioridadeSolicitacao = document.getElementById('edit-prioridade').value;
-        
+        let prioridadeSolicitacao = document.getElementById('edit-prioridade-select').value;
+        let campoPrioridadeEdit = document.getElementById('edit-prioridade').value;
+        let precoTotal = document.getElementById('edit-preco-total').value;
+        let NF = document.getElementById('edit-nf').value;
+        let Status = document.getElementById('edit-status').value;
     
-        // Captura os fornecedores selecionados
         let fornecedores = [];
         let selectFornecedores = document.getElementById('edit-Fornecedor'); 
         for (let i = 0; i < selectFornecedores.selectedOptions.length; i++) {
             let id_fornecedor = selectFornecedores.selectedOptions[i].value;
-            fornecedores.push({
-                'id_fornecedor':id_fornecedor});
+            fornecedores.push({ 'id_fornecedor': id_fornecedor });
         }
-        
-        console.log(fornecedores[0]);
-
-        // Captura os materiais selecionados e suas respectivas quantidades
-        let materiais = [];
-        let selectMateriais = document.querySelectorAll('#edit-materiais option:checked'); // Seleciona os materiais selecionados
-
-      
-
-        selectMateriais.forEach(option => {
-            let idMaterial = option.value; // ID do material
-            let nomeMaterial = option.textContent; // Nome do material
-
-            // Captura a quantidade para o material específico
-            let qtdMaterialInput = document.querySelector(`#quantidade-${idMaterial}`);
-            let qtdMaterial = qtdMaterialInput ? qtdMaterialInput.value : 0;
-
-            materiais.push({
-                'id_material': idMaterial,
-                'nome_material': nomeMaterial,
-                'qtd_material': qtdMaterial
-            });
-        });
-
-        console.log(materiais); // Exibe o array de materiais com nome e quantidade
-
-        if (!materiais ||
-            !fornecedores || !tituloSolicitacao || !prioridadeSolicitacao || !materiais[0].qtd_material
-        ) {
-            
-            alert('Todos os campos são obrigatórios e devem ser preenchidos.');
-            return; 
-            }
-
     
-        // Verifica se estamos em modo de edição ou adição
-        if (isEditMode) {
-            // Editar solicitação
-            $.ajax({
-                url: '../controller/AlterarPoCompra.php',
-                method: 'POST',
-                data: {
-                    Codigo: CodSolicitacao,
-                    Titulo: tituloSolicitacao,
-                    Prioridade: prioridadeSolicitacao,
-                    Fornecedores: JSON.stringify(fornecedores),
-                    Materiais: JSON.stringify(materiais)
-                },
-                success: function(response) {
-                    console.log('Requisição AJAX bem sucedida:', response);
-                    window.location.href = "../view/SolicitacaoCompra.php";
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erro na requisição AJAX:', error);
+        let selectMateriais = document.querySelectorAll('#edit-materiais option:checked');
+    
+        // Aguarda o carregamento de materiais antes de prosseguir
+        carregarMateriais(CodSolicitacao, selectMateriais, precoTotal)
+            .then(materiais => {
+
+                if (isEditMode) {
+                    if (
+                        materiais.length === 0 ||
+                        !materiais.every(item => item.qtd_material && item.qtd_material.trim()) ||
+                        fornecedores.length === 0 ||
+                        !tituloSolicitacao.trim() || 
+                        !precoTotal.trim() ||
+                        !NF.trim() ||
+                        !Status.trim() ||
+                        !campoPrioridadeEdit.trim()
+                    ) {
+                        alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+                        return;
+                    }
+                } else {
+                    if (
+                        materiais.length === 0 || 
+                        fornecedores.length === 0 ||
+                        !materiais.every(item => item.qtd_material && item.qtd_material.trim()) ||
+                        !tituloSolicitacao.trim() || 
+                        !prioridadeSolicitacao.trim()
+                    ) {
+                        alert('Todos os campos são obrigatórios e devem ser preenchidos.');
+                        return;
+                    }
                 }
-            });
-        } else {
-            // Adicionar nova solicitação
-            $.ajax({
-                url: '../controller/AddPoCompra.php',
-                method: 'POST',
-                data: {
-                    Titulo: tituloSolicitacao,
-                    Prioridade: prioridadeSolicitacao,
-                    Fornecedores: JSON.stringify(fornecedores),
-                    Materiais: JSON.stringify(materiais)
-                },
-                success: function(response) {
-                    console.log('Requisição AJAX bem sucedida:', response);
-                    alert("Solicitação de compra adicionada com sucesso!");
-                    window.location.href = "../view/SolicitacaoCompra.php";
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erro na requisição AJAX:', error);
+                
+                
+    
+                if (isEditMode) {
+                    console.log('Modo de edição. Salvando...');
+                    $.ajax({
+                        url: '../controller/AlterarPoCompra.php',
+                        method: 'POST',
+                        data: {
+                            Codigo: CodSolicitacao,
+                            Titulo: tituloSolicitacao,
+                            Prioridade: prioridadeSolicitacao,
+                            nf: NF,
+                            Status: Status,
+                            Fornecedores: JSON.stringify(fornecedores),
+                            Materiais: JSON.stringify(materiais)
+                        },
+                        success: function(response) {
+                            console.log('Requisição AJAX bem-sucedida:', response);
+                            alert('Solicitação de compra alterada com sucesso!');
+                            window.location.href = "../view/SolicitacaoCompra.php";
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Erro na requisição AJAX:', error);
+                            alert('Erro');
+                        }
+                    });
+                } else {
+                    console.log('Modo de adição. Salvando...');
+                    $.ajax({
+                        url: '../controller/AddPoCompra.php',
+                        method: 'POST',
+                        data: {
+                            Titulo: tituloSolicitacao,
+                            Prioridade: prioridadeSolicitacao,
+                            Fornecedores: JSON.stringify(fornecedores),
+                            Materiais: JSON.stringify(materiais)
+                        },
+                        success: function(response) {
+                            console.log('Requisição AJAX bem-sucedida:', response);
+                            alert('Solicitação de compra adicionada com sucesso!');
+                            window.location.href = "../view/SolicitacaoCompra.php";
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Erro na requisição AJAX:', error);
+                            alert('Erro!');
+                        }
+                    });
                 }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar materiais:', error);
+                alert('Erro ao carregar materiais. Verifique os dados.');
             });
-        }
     });
+    
 
     btnSalvarEdit.addEventListener('click', function(event) {
         event.preventDefault(); // Previne o comportamento padrão do botão
+
+        console.log('eu')
 
         var CodigoPO = document.querySelector('.product-id').value;
 
@@ -284,25 +363,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
 
         linhas.forEach((linha, index) => {
-            let nomeMaterial = linha.querySelector(`#nomeMat-${index}`).value; // Captura o valor do nome do material
             let qtdMaterial = linha.querySelector(`#qtdMat-${index}`).value; // Captura o valor da quantidade
-            let precoUnit = linha.querySelector('td:nth-child(3)').textContent; // Captura o valor unitário
             let precoTotal = linha.querySelector('td:nth-child(4)').textContent; // Captura o valor total
             let idMat = linha.querySelector(`#nomeMat-${index}`).getAttribute('data-id-material');
 
-            // Aqui você deve ter uma forma de identificar o id_material
-            // Se você não tem um id_material específico, você pode precisar armazená-lo em algum lugar
-
             materiais.push({
                 'id_mat': idMat,
-                'nome_material': nomeMaterial,
                 'qtd_material': qtdMaterial,
-                'preco_unit': precoUnit,
                 'preco_total': precoTotal
             });
         });
 
-        if (!tituloSolicitacao || !prioridadeSolicitacao || !nf || !idForn || !status || !materiais[0].nome_material || !materiais[0].qtd_material
+        if (!tituloSolicitacao || !prioridadeSolicitacao || !campoPrecoTotal || !nf || !idForn || !status || !materiais[0].nome_material || !materiais[0].qtd_material
         ) {
             
             alert('Todos os campos são obrigatórios e devem ser preenchidos.');
@@ -328,6 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
+                    alert('Erro!')
                 }
             });
     });
@@ -342,8 +415,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { id_identificador: CodigoPO },
                     success: function(response) {
+                        console.log(response)
+                        let responseParse = JSON.parse(response);
 
-                        if (!response.success) {  // Verifica o campo "success" no JSON
+                        if (!responseParse.success) {  // Verifica o campo "success" no JSON
                             alert('Não existe nenhuma solicitação de compra com esse id');
                             return;
                         }

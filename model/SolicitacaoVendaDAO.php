@@ -145,11 +145,9 @@ require_once("UserDAO.php");
             $delete = $this->banco->prepare("DELETE FROM pedidovenda WHERE id_identificador=?");
             $codigoMaterial= array($id_identificador);
 
-            if($delete->execute($codigoMaterial)){
-                return true;
-            }
+            $delete->execute($codigoMaterial);
         
-            return false;
+            return $delete->rowCount() > 0; 
         }
 
         public function Inserir_valor_total($valor_total, $id_identificador) {    

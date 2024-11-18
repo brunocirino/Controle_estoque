@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     btnAdicionar.addEventListener('click', function() {
         isEditMode = false;  // Definir modo de adição
+        btnSalvarEdit.style.display = 'block'
         modal.style.display = 'block';
         Titulo.textContent = "Adicionar material";
 
@@ -108,44 +109,41 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert('Não existe nenhuma solicitação de venda com esse id');
                         return;  // Interrompe a execução do restante do código
                     }
-    
-                    // Preencha o modal com os detalhes recebidos
-                    document.getElementById('view-Codigo').value = detalhes[0].id_identificador;
-                    campoTitulo.value = detalhes[0].Titulo;
-                    campoCliente.value = detalhes[0].nomeCliente;
-                    campoCPF.value = detalhes[0].cpfCliente;
-                    campoCliente.setAttribute('data-id-fornecedor', detalhes[0].id_Cliente);
-                    campoPrecoTotal.value = detalhes[0].preco_total_PO;
-                    campoStatus.value = detalhes[0].status;
-                    campoNF.value = detalhes[0].NR_NF
-    
-                    // Remover o atributo 'readonly' para permitir edição
-                    campoTitulo.removeAttribute('readonly');
-                    campoCliente.removeAttribute('readonly');
-                    campoPrecoTotal.removeAttribute('readonly');
-                    campoStatus.removeAttribute('readonly');
-                    campoNF.removeAttribute('readonly');
-    
-                    // Preencher a tabela de materiais
-                    var tabelaProdutos = document.getElementById('produtos-table').getElementsByTagName('tbody')[0];
-                    tabelaProdutos.innerHTML = ''; // Limpa a tabela antes de preencher
-    
-                    detalhes.forEach(function(produto, index) {
-                        var novaLinha = tabelaProdutos.insertRow(); // Insere nova linha na tabela
-                        var celulaNome = novaLinha.insertCell(0);
-                        var celulaQuantidade = novaLinha.insertCell(1);
-                        var celulaPrecoUnitario = novaLinha.insertCell(2);
-                        var celulaPrecoTotal = novaLinha.insertCell(3);
-    
-                        celulaNome.innerHTML = `<input id="nomeProd-${index}" type="text" value="${produto.nomeProd}" data-id-produto="${produto.codProd}" >`;
-                        celulaQuantidade.innerHTML = `<input id="qtdProd-${index}" type="number" value="${produto.qtdProd}" >`;
-                        celulaPrecoUnitario.textContent = produto.prcUnitProd; // Preenche o preço unitário
-                        celulaPrecoTotal.textContent = produto.preco_total;
+                    
+                    document.getElementById('edit-titulo').value = detalhes[0].Titulo;
+                    document.getElementById('edit-preco-total').value = detalhes[0].preco_total_PO;
+                    document.getElementById('edit-status').value = detalhes[0].status;
+                    document.getElementById('edit-nf').value = detalhes[0].NR_NF;
+
+                    var campoProduto = document.getElementById('edit-Produtos');
+
+                    
+                    var idsProdutoSelecionados = detalhes.map(Produto => Produto.id_mat);
+                    var quantidadesProduto = detalhes.map(Produto => Produto.qtdMat);
+
+                    // Marca as opções selecionadas com base nos IDs de materiais retornados
+                    for (var i = 0; i < campoProduto.options.length; i++) {
+                        var option = campoProduto.options[i];
+                        if (idsProdutoSelecionados.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    }
+
+                    document.getElementById('edit-Produtos').dispatchEvent(new Event('change'));
+
+                    // Definir as quantidades nos campos após a geração
+                    const container = document.getElementById('quantidade-container');
+                    idsProdutoSelecionados.forEach((codProd, index) => {
+                        const campoQuantidade = container.querySelector(`#quantidade-${codProd}`);
+                        if (campoQuantidade) {
+                            campoQuantidade.value = quantidadesProduto[index];
+                        }
                     });
+
     
                     // Exibir o modal
-                    var modalDetalhes = document.getElementById('viewModal');
-                    modalDetalhes.style.display = 'block';
+                    var modal = document.getElementById('editModal');
+                    modal.style.display = 'block';
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
@@ -219,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
+                    alert('solicitação de venda alterada com sucesso!')
                     window.location.href = "../view/SolicitacaoCompra.php";
                 },
                 error: function(xhr, status, error) {
@@ -266,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let linhas = document.querySelectorAll('#produtos-body tr'); 
 
         linhas.forEach((linha, index) => {
-            let nomeProduto = linha.querySelector(`#nomeProd-${index}`).value; 
+            let nomeProduto = linha.querySelector(`td:nth-child(1)`).value; 
             let qtdProduto = linha.querySelector(`#qtdProd-${index}`).value; 
             let precoUnit = linha.querySelector('td:nth-child(3)').textContent;
             let precoTotal = linha.querySelector('td:nth-child(4)').textContent; 
@@ -293,9 +292,9 @@ document.addEventListener('DOMContentLoaded', function() {
             !nf || 
             produtos.length === 0 || 
             !produtos[0].qtd_prod ||
-            isNaN(parseFloat(cpfCliente)) || // Verifica se cpfCliente é um número
-            isNaN(parseFloat(preco_total_PO)) || // Verifica se preco_total_PO é um número
-            isNaN(parseFloat(nf)) // Verifica se nf é um número
+            isNaN(parseFloat(cpfCliente)) || 
+            isNaN(parseFloat(preco_total_PO)) || 
+            isNaN(parseFloat(nf)) 
         ) {
             alert('Todos os campos são obrigatórios, devem ser preenchidos, e certos campos devem ser números.');
             return;
@@ -337,6 +336,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     data: { id_identificador: CodigoPO },
                     success: function(response) {
+                        console.log(response)
+                        let responseParse = JSON.parse(response);
+
+                        if (!responseParse.success) {  // Verifica o campo "success" no JSON
+                            alert('Não existe nenhuma solicitação de venda com esse id');
+                            return;
+                        }
+
                         console.log('Solicitação de venda excluída com sucesso:', response);
                         alert("Excluído ou inativado com sucesso!");
                         window.location.href = "../view/SolicitacaoVenda.php";

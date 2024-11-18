@@ -33,7 +33,8 @@ try {
 
     // Itera sobre cada material
     foreach ($materiais as $material) {
-        $idMaterial = $material['id_material'];
+        $Valor_total = 0;
+        $idMaterial = $material['id_mat'];
         $qtdMaterial = $material['qtd_material'];
         
         logError("Processando material: ID $idMaterial, Quantidade $qtdMaterial");
@@ -45,15 +46,19 @@ try {
             continue;
         }
 
-        logError("Preço unitário do material ID $idMaterial: $Preco_unit");
+        logError("Preço unitário do material ID $idMaterial: $Preco_unit e qtd: $qtdMaterial");
 
         // Soma o valor total
         $Valor_total += $Preco_unit * (int)$qtdMaterial;
+
+        logError("Valor_total do material ID $idMaterial: $Valor_total");
 
         // Itera sobre cada fornecedor
         foreach ($Fornecedores as $fornecedor) {
             $idForn = $fornecedor['id_fornecedor'];
             logError("Processando fornecedor: ID $idForn para o material ID $idMaterial");
+
+            logError("Prioridade $Prioridade");
 
             // Cria uma nova solicitação de compra
             $SolicitacaoCompra = new SolicitacaoCompra($Titulo, $idForn, $idMaterial, $qtdMaterial, $Preco_unit, $Valor_total, $Prioridade);

@@ -56,23 +56,6 @@ function preencherFornecedores(fornecedoresCadastrados) {
     });
 }
 
-// Função para adicionar campos de detalhes ao selecionar fornecedores (opcional)
-document.getElementById('edit-Fornecedor').addEventListener('change', function() {
-    const selecionados = Array.from(this.selectedOptions).map(opt => opt.value);
-    const container = document.getElementById('detalhes-fornecedores-container');
-    console.log(container)
-    container.innerHTML = ''; // Limpa os campos anteriores
-
-    // Adiciona campos de detalhes para os fornecedores selecionados (opcional)
-    selecionados.forEach(fornecedorId => {
-        const fornecedor = fornecedoresCadastrados.find(f => f.id == fornecedorId);
-        if (fornecedor) {
-            const div = document.createElement('div');
-            div.innerHTML = `<p>Nome: ${fornecedor.nome}</p>`;
-            container.appendChild(div);
-        }
-    });
-});
 
 // Chama a função para trazer os fornecedores quando o modal é aberto ou quando necessário
 TrazerTodosFornecedores();

@@ -24,20 +24,20 @@ require_once("UserDAO.php");
         
         public function TrazerTodaSolicitacao() {
             $consulta = $this->banco->prepare('SELECT 
-                    c.Titulo, 
-                    SUM(c.preco_total) AS total_preco, 
-                    c.Prioridade, 
-                    c.NR_NF,
-                    c.status, 
-                    c.id_identificador, 
-                    f.nomeFantasia
-                FROM pedidocompra c
-                JOIN fornecedores f ON c.id_forn = f.id
-                GROUP BY 
-                    c.id_identificador
-                ORDER BY 
-                    c.id_identificador;');
-            $consulta->execute();
+            c.Titulo, 
+            SUM(DISTINCT c.preco_total) AS total_preco,
+            c.Prioridade, 
+            c.NR_NF,
+            c.status, 
+            c.id_identificador, 
+            f.nomeFantasia
+        FROM pedidocompra c
+        JOIN fornecedores f ON c.id_forn = f.id
+        GROUP BY 
+            c.id_identificador
+        ORDER BY 
+            c.id_identificador;');
+                    $consulta->execute();
             $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
             return $resultados;
         }
@@ -59,47 +59,83 @@ require_once("UserDAO.php");
                 return $resultados;
         }
 
-        public function Atualizar_PoCompra($id_identificador, $NF, $titulo, $id_forn, $materiais, $Prioridade, $Status) {
+        public function Atualizar_PoCompra($id_identificador, $NF, $titulo, $Fornecedores, $materiais, $Prioridade, $Status) {
+            // Caminho do arquivo de log
+            $logFile = 'C:\\Users\\bruno\\OneDrive\\Área de Trabalho\\Log_Erro_TCC\\Log_Erro_TCC.txt';
+        
             // Inicia uma transação
             $this->banco->beginTransaction();
-        
+            
             try {
                 // 1. Excluir todos os materiais antigos associados ao pedido
                 $deletePoCompra = $this->banco->prepare("DELETE FROM pedidocompra WHERE id_identificador = ?");
-                $deletePoCompra->execute(array($id_identificador));
-                
+                if (!$deletePoCompra) {
+                    $errorInfo = $this->banco->errorInfo();
+                    file_put_contents($logFile, date("Y-m-d H:i:s") . " - Erro ao preparar a query para excluir materiais antigos: " . $errorInfo[2] . PHP_EOL, FILE_APPEND);
+                    throw new Exception("Erro ao preparar a query para excluir materiais antigos: " . $errorInfo[2]);
+                }
+                if (!$deletePoCompra->execute(array($id_identificador))) {
+                    $errorInfo = $deletePoCompra->errorInfo();
+                    file_put_contents($logFile, date("Y-m-d H:i:s") . " - Erro ao excluir materiais antigos (ID Identificador: $id_identificador): " . $errorInfo[2] . PHP_EOL, FILE_APPEND);
+                    throw new Exception("Erro ao excluir materiais antigos (ID Identificador: $id_identificador): " . $errorInfo[2]);
+                }
+        
+                // Consulta para inserir novos materiais
                 $sql = "INSERT INTO pedidocompra (Titulo, id_forn, id_mat, qtdMat, preco_unit, preco_total, NR_NF, Prioridade, id_identificador, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
                 // Prepara a consulta
                 $inserir = $this->banco->prepare($sql);
-
+                if (!$inserir) {
+                    $errorInfo = $this->banco->errorInfo();
+                    file_put_contents($logFile, date("Y-m-d H:i:s") . " - Erro ao preparar a query para inserir materiais: " . $errorInfo[2] . PHP_EOL, FILE_APPEND);
+                    throw new Exception("Erro ao preparar a query para inserir materiais: " . $errorInfo[2]);
+                }
+        
                 // Percorre cada material e executa o INSERT
                 foreach ($materiais as $material) {
-                    $inserir->execute([
-                        $titulo,        // Título do pedido de compra
-                        $id_forn,                   // ID do fornecedor
+
+                    $preco_total = $material['preco_total'] = floatval(str_replace(",", ".", $material['preco_total']));
+
+                    file_put_contents($logFile, date("Y-m-d H:i:s") . " - preco_total recebido: " . $material['preco_total'] . "\n", FILE_APPEND);
+
+                    if (!$inserir->execute([
+                        $titulo,                    // Título do pedido de compra
+                        $Fornecedores[0]['id_fornecedor'],                   // ID do fornecedor
                         $material['id_mat'],        // ID do material
-                        $material['qtd_material'],  // Quantidade do material
-                        $material['preco_unit'],    // Preço unitário
-                        $material['preco_total'],
-                        $NF,    // Preço total
+                        $material['qtd_material'],
+                        $material['preco_unit'],  // Quantidade do material
+                        $preco_total,    // Preço total
+                        $NF,                        // Número da nota fiscal
                         $Prioridade,                // Prioridade
                         $id_identificador,          // ID identificador
                         $Status                     // Status
-                    ]);
+                    ])) {
+                        $errorInfo = $inserir->errorInfo();
+                        file_put_contents($logFile, date("Y-m-d H:i:s") . " - Erro ao inserir material ID " . $material['id_mat'] . ": " . $errorInfo[2] . PHP_EOL, FILE_APPEND);
+                        throw new Exception("Erro ao inserir material ID " . $material['id_mat'] . ": " . $errorInfo[2]);
+                    } else {
+                        // Log do sucesso ao inserir o material
+                        file_put_contents($logFile, date("Y-m-d H:i:s") . " - Material ID " . $material['id_mat'] . " inserido com sucesso.\n", FILE_APPEND);
+                    }
                 }
-
+        
                 // Confirma a transação
                 $this->banco->commit();
+                file_put_contents($logFile, date("Y-m-d H:i:s") . " - Transação confirmada com sucesso.\n", FILE_APPEND);
                 return true;
         
             } catch (Exception $e) {
                 // Reverte a transação em caso de erro
                 $this->banco->rollBack();
+        
+                // Log do erro geral
+                file_put_contents($logFile, date("Y-m-d H:i:s") . " - Erro na transação: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
                 return false;
             }
         }
+        
+        
         
         public function Concluir($id_identificador, $materiais, $Status) {
             try {

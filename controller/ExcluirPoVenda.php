@@ -6,7 +6,9 @@ require_once('../model/SolicitacaoVendaDAO.php');
 
     $SolicitacaoVendaDAO = new SolicitacaoVendaDAO();
     
-    $SolicitacaoVendaDAO->excluir_Po_Venda($CodPo);
+    $resultados = $SolicitacaoVendaDAO->excluir_Po_Venda($CodPo);
+
+    echo json_encode(["success" => $resultados]);
 
   ?> 
    

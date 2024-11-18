@@ -127,14 +127,25 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 id="modal-title">Editar Solicitação de compra</h2>
+        <h2 id="modal-title">Editar Solicitação de venda</h2>
         <form id="form-editar-usuario">
             <input type="hidden" id="edit-codigo">
             <div>
                 <label for="edit-titulo">Titulo:</label>
                 <input type="text" id="edit-titulo" name="edit-titulo">
             </div>
-
+            <div>
+                <label for="edit-preco-total">Preço total:</label>
+                <input type="text" id="edit-preco-total" name="edit-preco-total" readonly>
+            </div>
+            <div>
+                <label for="edit-status">Status:</label>
+                <input type="text" id="edit-status" name="edit-status" readonly>
+            </div>
+            <div>
+                <label for="edit-nf">Numero NF:</label>
+                <input type="text" id="edit-nf" name="edit-nf" readonly>
+            </div>
             <div class="Produtos-select">
                 <label for="edit-Produtos">Produtos:</label>
                 <select id="edit-Produtos" name="Produtos[]" multiple></select>
