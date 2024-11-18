@@ -139,6 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     var idFornecedorSelecionado = 0;
                     var idFornecedorSelecionado = detalhes[0].id_forn;
 
+                     // Limpando seleção anterior no campo <select>
+                     for (var i = 0; i < campoFornecedor.options.length; i++) {
+                        campoFornecedor.options[i].selected = false;
+                    }
+
+                    const container = document.getElementById('quantidade-container');
+                    container.innerHTML = ''; 
                 
                     // Definir o valor selecionado no campo de fornecedores
                     for (var i = 0; i < campoFornecedor.options.length; i++) {
@@ -164,7 +171,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-materiais').dispatchEvent(new Event('change'));
 
                     // Definir as quantidades nos campos após a geração
-                    const container = document.getElementById('quantidade-container');
+                 
+
                     idsMateriaisSelecionados.forEach((materialId, index) => {
                         const campoQuantidade = container.querySelector(`#quantidade-${materialId}`);
                         if (campoQuantidade) {

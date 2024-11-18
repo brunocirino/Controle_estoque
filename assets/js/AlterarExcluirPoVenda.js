@@ -18,15 +18,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var campoStatus = document.getElementById('view-status');
     var campoNF = document.getElementById('view-nf');
 
+    var campoEdit_Preco_total = document.getElementById('div-edit-preco-total')
+    var campoEdit_status = document.getElementById('div-edit-status')
+    var campoEdit_NF = document.getElementById('div-edit-nf')
+
     btnAdicionar.addEventListener('click', function() {
         isEditMode = false;  // Definir modo de adição
+        campoEdit_NF.style.display = 'none'
+        campoEdit_Preco_total.style.display = 'none'
+        campoEdit_status.style.display = 'none'
         btnSalvarEdit.style.display = 'block'
         modal.style.display = 'block';
         Titulo.textContent = "Adicionar material";
 
         document.getElementById('edit-titulo').value = '';
         document.getElementById('edit-Cliente').value = '';
-        document.getElementById('edit-materiais').value = '';
         document.getElementById('edit-prioridade').value = '';
     });
 
@@ -116,10 +122,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-nf').value = detalhes[0].NR_NF;
 
                     var campoProduto = document.getElementById('edit-Produtos');
+                    
+
+                    // Limpando seleção anterior no campo <select>
+                    for (var i = 0; i < campoProduto.options.length; i++) {
+                        campoProduto.options[i].selected = false;
+                    }
+
+                    var container = document.getElementById('quantidade-container');
+                     // Limpando os campos de quantidade existentes
+                     container.innerHTML = ''; // Remove todos os campos anteriores
 
                     
-                    var idsProdutoSelecionados = detalhes.map(Produto => Produto.id_mat);
-                    var quantidadesProduto = detalhes.map(Produto => Produto.qtdMat);
+                    var idsProdutoSelecionados = detalhes.map(Produto => Produto.codProd);
+                    var quantidadesProduto = detalhes.map(Produto => Produto.qtdProd);
 
                     // Marca as opções selecionadas com base nos IDs de materiais retornados
                     for (var i = 0; i < campoProduto.options.length; i++) {
@@ -132,13 +148,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-Produtos').dispatchEvent(new Event('change'));
 
                     // Definir as quantidades nos campos após a geração
-                    const container = document.getElementById('quantidade-container');
                     idsProdutoSelecionados.forEach((codProd, index) => {
                         const campoQuantidade = container.querySelector(`#quantidade-${codProd}`);
                         if (campoQuantidade) {
                             campoQuantidade.value = quantidadesProduto[index];
                         }
                     });
+
+
+                    var campoCliente = document.getElementById('edit-Cliente');
+
+                    for (var i = 0; i < campoCliente.options.length; i++) {
+                        campoCliente.options[i].selected = false;
+                    }
+                    
+                    var idsClientesSelecionados = detalhes.map(Clientes => Clientes.codCli);
+                   
+                    // Marca as opções selecionadas com base nos IDs de materiais retornados
+                    for (var i = 0; i < campoCliente.options.length; i++) {
+                        var option = campoCliente.options[i];
+                        if (idsClientesSelecionados.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    }
 
     
                     // Exibir o modal
@@ -205,45 +237,94 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Verifica se estamos em modo de edição ou adição
         if (isEditMode) {
-            // Editar solicitação
-            $.ajax({
-                url: '../controller/AlterarPoVenda.php',
-                method: 'POST',
-                data: {
-                    Codigo: CodSolicitacao,
-                    Titulo: tituloSolicitacao,
-                    Clientes: JSON.stringify(Clientes),
-                    Produtos: JSON.stringify(Produtos)
-                },
-                success: function(response) {
-                    console.log('Requisição AJAX bem sucedida:', response);
-                    alert('solicitação de venda alterada com sucesso!')
-                    window.location.href = "../view/SolicitacaoCompra.php";
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erro na requisição AJAX:', error);
-                }
+            var CodigoPO = document.querySelector('.product-id').value;
+
+            let tituloSolicitacao = document.getElementById('edit-titulo').value;
+            let status = document.getElementById('edit-status').value;
+            let preco_total_PO =  document.getElementById('edit-preco-total').value;
+            let nf = document.getElementById('edit-nf').value;
+
+            console.log(nf);
+        
+            // Captura os materiais selecionados e suas respectivas quantidades
+            let produtos = [];
+            let linhas = document.querySelectorAll('#produtos-body tr'); 
+
+            linhas.forEach((linha, index) => {
+                let nomeProduto = linha.querySelector(`td:nth-child(1)`).value; 
+                let qtdProduto = linha.querySelector(`#qtdProd-${index}`).value; 
+                let precoUnit = linha.querySelector('td:nth-child(3)').textContent;
+                let precoTotal = qtdProduto * precoUnit;
+                let idProd = linha.querySelector(`#nomeProd-${index}`).getAttribute('data-id-produto');
+
+
+                produtos.push({
+                    'id_prod': idProd,
+                    'nome_prod': nomeProduto,
+                    'qtd_prod': qtdProduto,
+                    'preco_unit': precoUnit,
+                    'preco_total': precoTotal
+                });
+
+                console.log(produtos)
             });
-        } else {
-            // Adicionar nova solicitação
+
+            if (
+                !tituloSolicitacao || 
+                !status || 
+                !preco_total_PO || 
+                !nf || 
+                !produtos.every(item => item.qtdProd && item.qtdProd.trim()) ||
+                isNaN(parseFloat(preco_total_PO)) || 
+                isNaN(parseFloat(nf)) 
+            ) {
+                alert('Todos os campos são obrigatórios, devem ser preenchidos, e certos campos devem ser números.');
+                return;
+            }
+            
+
+                // Editar solicitação
+                $.ajax({
+                    url: '../controller/AlterarPoVenda.php',
+                    method: 'POST',
+                    data: {
+                        Codigo: CodigoPO,
+                        NF: nf,
+                        Titulo: tituloSolicitacao,
+                        preco_total_PO: preco_total_PO,
+                        Status: status,
+                        produtos: JSON.stringify(produtos)
+                    },
+                    success: function(response) {
+                        console.log('Requisição AJAX bem sucedida:', response);
+                        alert('solicitação de venda alterada com sucesso!')
+                        window.location.href = "../view/SolicitacaoVenda.php";
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro na requisição AJAX:', error);
+                    }
+             });
+         }else{
+            // Editar solicitação
             $.ajax({
                 url: '../controller/AddPoVenda.php',
                 method: 'POST',
                 data: {
                     Titulo: tituloSolicitacao,
                     Clientes: JSON.stringify(Clientes),
-                    Produtos: JSON.stringify(produtos)
+                    Produtos: JSON.stringify(produtos),
+                    Status: status,
                 },
                 success: function(response) {
                     console.log('Requisição AJAX bem sucedida:', response);
-                    alert("Solicitação de venda adicionada com sucesso!");
+                    alert('solicitação de venda alterada com sucesso!')
                     window.location.href = "../view/SolicitacaoVenda.php";
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro na requisição AJAX:', error);
                 }
             });
-        }
+         }
     });
 
     btnSalvarEdit.addEventListener('click', function(event) {
@@ -268,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let nomeProduto = linha.querySelector(`td:nth-child(1)`).value; 
             let qtdProduto = linha.querySelector(`#qtdProd-${index}`).value; 
             let precoUnit = linha.querySelector('td:nth-child(3)').textContent;
-            let precoTotal = linha.querySelector('td:nth-child(4)').textContent; 
+            let precoTotal = qtdProduto * precoUnit;
             let idProd = linha.querySelector(`#nomeProd-${index}`).getAttribute('data-id-produto');
 
 

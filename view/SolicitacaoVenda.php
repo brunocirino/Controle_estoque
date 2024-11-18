@@ -134,22 +134,22 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                 <label for="edit-titulo">Titulo:</label>
                 <input type="text" id="edit-titulo" name="edit-titulo">
             </div>
-            <div>
+            <div id="div-edit-preco-total">
                 <label for="edit-preco-total">Preço total:</label>
                 <input type="text" id="edit-preco-total" name="edit-preco-total" readonly>
             </div>
-            <div>
+            <div id="div-edit-status">
                 <label for="edit-status">Status:</label>
                 <input type="text" id="edit-status" name="edit-status" readonly>
             </div>
-            <div>
+            <div id="div-edit-nf">
                 <label for="edit-nf">Numero NF:</label>
                 <input type="text" id="edit-nf" name="edit-nf" readonly>
             </div>
-            <div class="Produtos-select">
-                <label for="edit-Produtos">Produtos:</label>
-                <select id="edit-Produtos" name="Produtos[]" multiple></select>
-            </div>
+                <div class="Produtos-select">
+                    <label for="edit-Produtos">Produtos:</label>
+                    <select id="edit-Produtos" name="Produtos[]" multiple></select>
+                </div>
 
             <div class="Cliente-select">
                 <label for="edit-Cliente">Cliente:</label>

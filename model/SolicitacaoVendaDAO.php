@@ -32,7 +32,7 @@ require_once("UserDAO.php");
         
 
         public function ConsultarPoVenda($codPO) {
-            $consulta = $this->banco->prepare('SELECT * FROM pedidovenda WHERE id_identificador = :codPO');
+            $consulta = $this->banco->prepare('SELECT *, c.codCli FROM pedidovenda pv INNER JOIN clientes c ON pv.cpfCliente = c.cpfCli WHERE id_identificador = :codPO');
             $consulta->bindValue(':codPO', $codPO);
             $consulta->execute();
             $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -40,7 +40,7 @@ require_once("UserDAO.php");
         }
         
 
-        public function Atualizar_PoVenda($id_identificador, $titulo, $NF, $nomeCliente, $cpfCliente, $Produtos, $Status, $preco_total_PO) {
+        public function Atualizar_PoVenda($id_identificador, $titulo, $NF, $Produtos, $Status, $preco_total_PO) {
             // Inicia uma transação
             $this->banco->beginTransaction();
         
@@ -49,8 +49,8 @@ require_once("UserDAO.php");
                 $deletePoCompra = $this->banco->prepare("DELETE FROM pedidovenda WHERE id_identificador = ?");
                 $deletePoCompra->execute(array($id_identificador));
                 
-                $sql = "INSERT INTO pedidovenda (Titulo, nomeCliente, cpfCliente, codProd, nomeProd, qtdProd, prcUnitProd, preco_total, preco_total_PO, NR_NF, status, id_identificador) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                $sql = "INSERT INTO pedidovenda (Titulo,codProd, nomeProd, qtdProd, prcUnitProd, preco_total, preco_total_PO, NR_NF, status, id_identificador) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
                 // Prepara a consulta
                 $inserir = $this->banco->prepare($sql);
@@ -58,9 +58,7 @@ require_once("UserDAO.php");
                 // Percorre cada material e executa o INSERT
                 foreach ($Produtos as $produto) {
                     $inserir->execute([
-                        $titulo,       
-                        $nomeCliente,
-                        $cpfCliente,                 
+                        $titulo,                       
                         $produto['id_prod'],       
                         $produto['nome_prod'],  
                         $produto['qtd_prod'],    
