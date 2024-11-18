@@ -108,7 +108,6 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                         <th>nome cliente</th>
                         <th>email cliente</th>
                         <th>telefone cliente</th>
-                        <th>id endereço cliente</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -159,9 +158,51 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
     </div>
 </div>
 
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Detalhes</h2>
+        <form id="form-view-PO">
+            <input type="hidden" id="edit-codigo">
+            <div>
+                <label for="view-Codigo">Código:</label>
+                <input type="text" id="view-Codigo" name="view-Codigo" readonly>
+            </div>
+            <div>
+                <label for="view-CPF">CPF:</label>
+                <input type="text" id="view-CPF" name="view-CPF" readonly>
+            </div>
+            <div>
+                <label for="view-nome">Nome:</label>
+                <input type="text" id="view-nome" name="view-nome" readonly>
+            </div>
+            <div>
+                <label for="view-email">Email:</label>
+                <input type="text" id="view-email" name="view-email" readonly>
+            </div>
+        </form>
+        <h3>Endereço</h3>
+        <table id="endereco-table" readonly>
+            <thead>
+                <tr>
+                    <th>Bairro</th>
+                    <th>UF</th>
+                    <th>CEP</th>
+                </tr>
+            </thead>
+            <tbody id="endereco-body">
+                <!-- Linhas de materiais serão inseridas aqui -->
+            </tbody>
+        </table>
+
+        <button id="btn-salvaredit">Salvar</button>
+    </div>
+</div>
+
 <script src="../assets/js/Menu_lateral_Home.js"></script>
 <script src="../assets/js/TrazerTodosClientes.js"></script>
 <script src="../assets/js/AlterarExcluirCliente.js"></script> 
 <script src="../assets/js/API_CEP.js"></script> 
+<script src="../assets/js/viewDetalhesCliente.js"></script>
 </body>
 </html>

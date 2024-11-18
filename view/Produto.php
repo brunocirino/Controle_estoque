@@ -155,9 +155,55 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
     </div>
 </div>
 
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Detalhes</h2>
+        <form id="form-view-PO">
+            <input type="hidden" id="edit-codigo">
+            <div>
+                <label for="view-Codigo">Código:</label>
+                <input type="text" id="view-Codigo" name="view-Codigo" readonly>
+            </div>
+            <div>
+                <label for="view-nome">Nome produto:</label>
+                <input type="text" id="view-nome" name="view-nome" readonly>
+            </div>
+            <div>
+                <label for="view-qtd-prod">Quanitdade do produto:</label>
+                <input type="text" id="view-qtd-prod" name="view-qtd-prod" readonly>
+            </div>
+            <div>
+                <label for="view-preco">Preço:</label>
+                <input type="text" id="view-preco" name="view-preco" readonly>
+            </div>
+            <div>
+                <label for="view-estado">Estado do produto:</label>
+                <input type="text" id="view-estado" name="view-estado" readonly>
+            </div>
+        </form>
+        <h3>Materiais</h3>
+        <table id="materiais-table">
+            <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Material</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody id="materiais-body">
+                <!-- Linhas de materiais serão inseridas aqui -->
+            </tbody>
+        </table>
+
+        <button id="btn-salvaredit">Salvar</button>
+    </div>
+</div>
+
 <script src="../assets/js/Menu_lateral_Home.js"></script>
 <script type="module" src="../assets/js/ProdutoSelectMaterial.js"></script>
 <script src="../assets/js/TrazerTodosProdutos.js"></script>
 <script type="module" src="../assets/js/AlterarExcluirProduto.js"></script> 
+<script src="../assets/js/viewDetalhesProduto.js"></script>
 </body>
 </html>

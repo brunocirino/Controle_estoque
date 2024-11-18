@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit-prioridade').value = '';
     });
 
-    btnEntregue.addEventListener('click', function() {
+    /**btnEntregue.addEventListener('click', function() {
         var CodigoPO = document.querySelector('.product-id').value;
         let status = "Entregue";
         let materiais = [];
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+    **/
     
 
     btnEditar.addEventListener('click', function() {

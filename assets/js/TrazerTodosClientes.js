@@ -46,7 +46,7 @@ function preencherTabela(data) {
         newRow.setAttribute('data-cod-cli', Cliente['codCli']);
 
         // Criar células para cada propriedade do cliente e preencher com os dados
-        var keys = ['codCli', 'cpfCli', 'nomeCli', 'emailCli', 'fone', 'id_end'];
+        var keys = ['codCli', 'cpfCli', 'nomeCli', 'emailCli', 'fone'];
         keys.forEach(function(key) {
             var newCell = document.createElement('td');
             if (key === 'cpfCli') {
