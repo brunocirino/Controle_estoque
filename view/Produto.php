@@ -108,8 +108,6 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                         <th>Quantidade produto</th>
                         <th>Preço</th>
                         <th>Estado produto</th>
-                        <th>Material utilizado</th>
-                        <th>Quantidade Material</th>
                     </tr>
                 </thead>
                 <tbody>
