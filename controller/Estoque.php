@@ -58,7 +58,7 @@ foreach ($materiais as &$material) {
 }
 
 // Atualiza a quantidade do produto
-$quantidadeProdutoTotal = $EntradaMode ? ($quantidadeProduto + $qtd_produto_atual) : ($qtd_produto_atual - $quantidadeProduto);
+$quantidadeProdutoTotal = $EntradaMode ? ($quantidadeProduto - $qtd_produto_atual) : ($qtd_produto_atual - $quantidadeProduto);
 $Estoque->Atualizar_Produto($id_identificador, $quantidadeProdutoTotal);
 
 echo json_encode([

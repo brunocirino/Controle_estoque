@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var Titulo = document.getElementById('modal-title');
     var btnSalvar = document.getElementById('btn-salvar');
     var isDevolucaoMode;
+    var isEntradaMode;
 
     btnentrada.addEventListener('click', function() {
         modal.style.display = 'block';
         Titulo.textContent = "Entrada";
         isDevolucaoMode = true;
+        isEntradaMode = true;
     });
 
     btnbaixa.addEventListener('click', function() {
@@ -19,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'block';
         Titulo.textContent = "Baixa";
         isDevolucaoMode = true;
+        isEntradaMode = false;
     });
 
     btnDevolucao.addEventListener('click', function() {
@@ -57,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 alert(aviso); // Exibe cada aviso
                             });
                         }
-                        if(isDevolucaoMode){
+                        if(isEntradaMode){
                             alert('Entrada realizada com sucesso!');
                         } else {
                             alert('Perda realizada com sucesso!');
