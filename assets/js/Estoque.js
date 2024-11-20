@@ -35,12 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault(); // Agora o evento é capturado corretamente
         var Quantidade = document.getElementById('edit-quantidade').value;
         var id_identificador = document.getElementById('product-id').value;
-        console.log(isDevolucaoMode);
+        console.log(isDevolucaoMode, isEntradaMode);
     
         $.ajax({
             url: '../controller/Estoque.php',
             method: 'POST',
-            data: { quantidade: Quantidade, id_identificador: id_identificador, Entrada: isDevolucaoMode },
+            data: { quantidade: Quantidade, id_identificador: id_identificador, Entrada: isDevolucaoMode , Perda: isEntradaMode},
             success: function(response) {
                 try {
                     // Tenta fazer o parse da resposta como JSON

@@ -4,6 +4,7 @@ require_once('../model/EstoqueDAO.php');
 $quantidadeProduto = isset($_POST['quantidade']) ? (int)$_POST['quantidade'] : 0; 
 $id_identificador = $_POST['id_identificador'];
 $EntradaMode = isset($_POST['Entrada']) && $_POST['Entrada'] === 'true';
+$PerdaMode = isset($_POST['Perda']) && $_POST['Perda'] === 'true';
 
 $Estoque = new EstoqueDAO();
 
@@ -58,7 +59,14 @@ foreach ($materiais as &$material) {
 }
 
 // Atualiza a quantidade do produto
-$quantidadeProdutoTotal = $EntradaMode ? ($quantidadeProduto - $qtd_produto_atual) : ($qtd_produto_atual - $quantidadeProduto);
+
+
+if ($PerdaMode == false){
+    $quantidadeProdutoTotal = $qtd_produto_atual - $quantidadeProduto;
+}else{
+    $quantidadeProdutoTotal = $EntradaMode ? ($quantidadeProduto + $qtd_produto_atual) : ($qtd_produto_atual - $quantidadeProduto);
+}
+
 $Estoque->Atualizar_Produto($id_identificador, $quantidadeProdutoTotal);
 
 echo json_encode([
