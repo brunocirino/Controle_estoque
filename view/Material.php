@@ -113,7 +113,6 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
                         <th>Status</th>
                         <th>Estoque minimo</th>
                         <th>Estoque atual</th>
-                        <th>movimentação </th>
                         <th>Preço</th>
                     </tr>
                 </thead>
@@ -159,10 +158,6 @@ echo "<script>var idProfessor = " . $_SESSION['id'] . ";</script>";
             <div>
                 <label for="edit-setor">Estoque atual:</label>
                 <input type="text" id="edit-estoqueAtual" name="edit-setor">
-            </div>
-            <div>
-                <label for="edit-setor">Movimentação:</label>
-                <input type="text" id="edit-movimentacao" name="edit-setor">
             </div>
             <div>
                 <label for="edit-preco">Preço:</label>

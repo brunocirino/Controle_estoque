@@ -10,9 +10,9 @@ require_once("UserDAO.php");
 
         public function cadastrarMaterial($material){
 
-            $inserir = $this->banco->prepare("INSERT INTO materiais (nomeMat, descMat, status, estoqueMin, estoqueAtual, contMov, preco) VALUES (?,?,?,?,?,?,?);");
+            $inserir = $this->banco->prepare("INSERT INTO materiais (nomeMat, descMat, status, estoqueMin, estoqueAtual, preco) VALUES (?,?,?,?,?,?);");
 
-            $novo_usuario = array($material->get_nome(), $material->get_descricao(), $material->get_status(), $material->get_estoquemin(), $material->get_EstoqueAtual(), $material->get_Movimentacao(), $material->get_Preco());
+            $novo_usuario = array($material->get_nome(), $material->get_descricao(), $material->get_status(), $material->get_estoquemin(), $material->get_EstoqueAtual(), $material->get_Preco());
 
             if($inserir->execute($novo_usuario)){
                 return true;
@@ -23,7 +23,7 @@ require_once("UserDAO.php");
 
         
         public function TrazerTodosMateriais(){
-            $consulta = $this->banco->prepare('SELECT codMat, nomeMat, descMat, status, estoqueMin, estoqueAtual, contMov, preco FROM materiais');
+            $consulta = $this->banco->prepare('SELECT codMat, nomeMat, descMat, status, estoqueMin, estoqueAtual, preco FROM materiais');
                 $consulta->execute();
                 $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $resultados;
@@ -51,10 +51,10 @@ require_once("UserDAO.php");
         
 
 
-        public function Atualizar_material($Codigo, $NomeMat, $descMat, $statusMat, $estoqueMin, $estoqueAtual, $movimentacao, $preco){
+        public function Atualizar_material($Codigo, $NomeMat, $descMat, $statusMat, $estoqueMin, $estoqueAtual, $preco){
 
-            $update = $this->banco->prepare("UPDATE materiais SET nomeMat=?, descMat=?, status=?, estoqueMin=?, estoqueAtual=?, contMov=?, preco=? WHERE codMat=?");
-            $editar = array($NomeMat, $descMat, $statusMat, $estoqueMin, $estoqueAtual ,$movimentacao,$preco ,$Codigo);
+            $update = $this->banco->prepare("UPDATE materiais SET nomeMat=?, descMat=?, status=?, estoqueMin=?, estoqueAtual=?, preco=? WHERE codMat=?");
+            $editar = array($NomeMat, $descMat, $statusMat, $estoqueMin, $estoqueAtual ,$preco ,$Codigo);
 
             if($update->execute($editar)){
                 return true;

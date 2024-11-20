@@ -7,12 +7,11 @@ require_once('../model/MaterialDAO.php');
     $estatusMat = $_POST['StatusMat'];
     $estoqueMin  = $_POST['EstoqueMin'];
     $estoqueAtual  = $_POST['EstoqueAtual'];
-    $movimentacao   = $_POST['Movimentacao'];
     $preco = $_POST['preco'];
 
     $AlterarUser = new MaterialDAO();
     
-    $AlterarUser->Atualizar_material($codMat, $NomeMat, $descMat, $estatusMat, $estoqueMin, $estoqueAtual, $movimentacao, $preco);
+    $AlterarUser->Atualizar_material($codMat, $NomeMat, $descMat, $estatusMat, $estoqueMin, $estoqueAtual, $preco);
 
 
   ?> 

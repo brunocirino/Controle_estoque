@@ -29,7 +29,7 @@ function preencherTabela(data) {
         newRow.classList.add('linha' + (index + 1));
 
         // Criar células para cada propriedade do usuario e preencher com os dados
-        var keys = ['codMat', 'nomeMat', 'descMat', 'status', 'estoqueMin', 'estoqueAtual', 'contMov', 'preco'];
+        var keys = ['codMat', 'nomeMat', 'descMat', 'status', 'estoqueMin', 'estoqueAtual', 'preco'];
         keys.forEach(function(key) {
             var newCell = document.createElement('td');
             newCell.textContent = key === 'preco' ? 'R$ ' + Material[key] : Material[key];

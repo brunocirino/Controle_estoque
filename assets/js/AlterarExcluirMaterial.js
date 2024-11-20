@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit-status').value = '';
         document.getElementById('edit-estoqueMin').value = '';
         document.getElementById('edit-estoqueAtual').value = '';
-        document.getElementById('edit-movimentacao').value = '';
         document.getElementById('edit-preco').value = '';
     });
 
@@ -49,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     var status = material.status;
                     var estoqueMin = material.estoqueMin;
                     var estoqueAtual = material.estoqueAtual;
-                    var contMov = material.contMov;
                     var preco = material.preco;
 
                     document.getElementById('edit-codigo').value = codMat;
@@ -58,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('edit-status').value = status;
                     document.getElementById('edit-estoqueMin').value = estoqueMin;
                     document.getElementById('edit-estoqueAtual').value = estoqueAtual;
-                    document.getElementById('edit-movimentacao').value = contMov;
                     document.getElementById('edit-preco').value = preco;
 
                     Titulo.textContent = "Editar Material";
@@ -83,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var statusMat = document.getElementById('edit-status').value;
         var estoqueMin = document.getElementById('edit-estoqueMin').value;
         var estoqueAtual = document.getElementById('edit-estoqueAtual').value;
-        var movimentacao = document.getElementById('edit-movimentacao').value;
         var preco = document.getElementById('edit-preco').value;
 
         console.log(statusMat)
@@ -93,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!nomeMat || !descMat || !statusMat ||
-        !estoqueMin || !estoqueAtual || !movimentacao || 
+        !estoqueMin || !estoqueAtual  || 
         !preco) {
         
         alert('Todos os campos são obrigatórios e devem ser preenchidos.');
@@ -112,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $.ajax({
             url: '../controller/AlterarMaterial.php',
             method: 'POST',
-            data: {CodMat: CodigoMat, NomeMat: nomeMat, DescMat: descMat, StatusMat: statusMat, EstoqueMin: estoqueMin, EstoqueAtual: estoqueAtual, Movimentacao: movimentacao, preco : preco},
+            data: {CodMat: CodigoMat, NomeMat: nomeMat, DescMat: descMat, StatusMat: statusMat, EstoqueMin: estoqueMin, EstoqueAtual: estoqueAtual, preco : preco},
             success: function(response) {
                 console.log('Requisição AJAX bem sucedida:', response);
                 alert('Material alterado com sucesso');
@@ -126,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $.ajax({
             url: '../controller/AddMaterial.php',
             method: 'POST',
-            data: {CodMat: CodigoMat, NomeMat: nomeMat, DescMat: descMat, StatusMat: statusMat, EstoqueMin: estoqueMin, EstoqueAtual: estoqueAtual, Movimentacao: movimentacao, preco : preco},
+            data: {CodMat: CodigoMat, NomeMat: nomeMat, DescMat: descMat, StatusMat: statusMat, EstoqueMin: estoqueMin, EstoqueAtual: estoqueAtual, preco : preco},
             success: function(response) {
                 console.log('Requisição AJAX bem sucedida:', response);
                 alert('Material adicionado com sucesso')

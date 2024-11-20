@@ -7,17 +7,15 @@
         protected $status;
         protected $Estoquemin;
         protected $EstoqueAtual;
-        protected $Movimentacao;
 
         protected $preco;
 
-        public function __construct($nome, $descricao, $status, $estoquemin, $estoqueAtual, $Movimentacao, $preco){
+        public function __construct($nome, $descricao, $status, $estoquemin, $estoqueAtual, $preco){
             $this->nome = $nome;
             $this->descricao = $descricao;
             $this->status = $status;
             $this->Estoquemin = $estoquemin;
             $this->EstoqueAtual = $estoqueAtual;
-            $this->Movimentacao = $Movimentacao;
             $this->preco = $preco;
         }
 
@@ -47,10 +45,6 @@
 
         public function get_EstoqueAtual(){
             return $this->EstoqueAtual;
-        }
-
-        public function get_Movimentacao(){
-            return $this->Movimentacao;
         }
 
         public function get_Preco(){

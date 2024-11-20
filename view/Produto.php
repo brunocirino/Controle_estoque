@@ -137,8 +137,19 @@ $success = isset($_GET['success']) ? $_GET['success'] : null;
                 <input type="number" id="edit-preco" name="edit-preco">
             </div>
             <div>
-                <label for="edit-estado">Estado:</label>
-                <input type="text" id="edit-estado" name="edit-status">
+                <label for="edit-estado">Status:</label>
+                <select id="edit-estado" name="edit-estado">
+                    <option value="" disabled selected>Selecione um status</option>
+                    <option value="Torno">Torno</option>  
+                    <option value="Furadeira fixa">Furadeira fixa</option>    
+                    <option value="Dobradeira">Dobradeira</option>                              
+                    <option value="Prensa">Prensa</option>
+                    <option value="Brochadeira">Brochadeira</option>   
+                    <option value="Serra vertical">Serra vertical</option>   
+                    <option value="Serra Horizontal">Serra Horizontal</option>   
+                    <option value="Retifica">Retifica</option>   
+                                         
+                </select>
             </div>
 
             <div class="Material-select">
