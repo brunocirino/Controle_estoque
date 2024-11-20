@@ -91,32 +91,31 @@ require_once("UserDAO.php");
         
         
         
-        public function Concluir($id_identificador, $materiais, $Status) {
+        public function Entregar($id_identificador, $Produtos, $Status) {
             try {
             
                 $this->banco->beginTransaction();
                 
-                $sql = "UPDATE pedidocompra SET status = ? WHERE id_identificador = ?";
+                $sql = "UPDATE pedidoVenda SET status = ? WHERE id_identificador = ?";
                 $atualizarPedido = $this->banco->prepare($sql);
                 $atualizarPedido->execute([$Status, $id_identificador]);
         
-        
-                $sqlMaterialSelect = "SELECT estoqueAtual FROM materiais WHERE codMat = ?";
-                $sqlMaterialUpdate = "UPDATE materiais SET estoqueAtual = ? WHERE codMat = ?";
+                $sqlMaterialSelect = "SELECT qtdProd FROM produtos WHERE id_identificador = ?";
+                $sqlMaterialUpdate = "UPDATE produtos SET qtdProd = ? WHERE id_identificador = ?";
                 $selecionarMaterial = $this->banco->prepare($sqlMaterialSelect);
                 $atualizarMaterial = $this->banco->prepare($sqlMaterialUpdate);
         
-                foreach ($materiais as $material) {
-                    $selecionarMaterial->execute([$material['id_mat']]);
+                foreach ($Produtos as $produto) {
+                    $selecionarMaterial->execute([$produto['codProd']]);
                     $resultado = $selecionarMaterial->fetch(PDO::FETCH_ASSOC);
         
                     if ($resultado) {
 
-                        $quantidadeAtual = $resultado['estoqueAtual'];            
+                        $quantidadeAtual = $resultado['qtdProd'];            
                         
-                        $novaQuantidade = $quantidadeAtual + $material['qtdMat']; 
+                        $novaQuantidade = $quantidadeAtual - $produto['qtdProd']; 
         
-                        $atualizarMaterial->execute([$novaQuantidade, $material['id_mat']]);
+                        $atualizarMaterial->execute([$novaQuantidade, $produto['codProd']]);
                 }
             }
         

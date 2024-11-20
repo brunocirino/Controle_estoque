@@ -36,59 +36,58 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit-prioridade').value = '';
     });
 
-    /**btnEntregue.addEventListener('click', function() {
+    btnEntregue.addEventListener('click', function() {
         var CodigoPO = document.querySelector('.product-id').value;
         let status = "Entregue";
-        let materiais = [];
+        let Produtos = [];
     
         // Primeira requisição: ConsultarPoCompra.php
         $.ajax({
-            url: '../controller/ConsultarPoCompra.php',
+            url: '../controller/ConsultarPoVenda.php',
             method: 'POST',
             data: {
                 Codigo: CodigoPO
             },
-            success: function(responseMat) {
-                console.log("AQui", responseMat);
-                let dados = typeof responseMat === "string" ? JSON.parse(responseMat) : responseMat;
+            success: function(responseProd) {
+                console.log("AQui", responseProd);
+                let dados = typeof responseProd === "string" ? JSON.parse(responseProd) : responseProd;
                 
                 // Processa os dados retornados da consulta
                 dados.forEach(function(item) {
-                    let idMat = item.id_mat;
-                    let qtdMat = item.qtdMat;
+                    let codProd = item.codProd;
+                    let qtdProd = item.qtdProd;
     
-                    console.log("ID do material:", idMat);
-                    console.log("Quantidade do material:", qtdMat);
+                    console.log("ID do produto:", codProd);
+                    console.log("Quantidade do produto:", qtdProd);
     
                     // Adiciona ao array materiais
-                    materiais.push({
-                        'id_mat': idMat,
-                        'qtdMat': qtdMat 
+                    Produtos.push({
+                        'codProd': codProd,
+                        'qtdProd': qtdProd 
                     });
                 });
     
-                // Segunda requisição: ConcluirPoCompra.php (apenas após processar os materiais)
-                console.log("Materiais prontos para envio:", materiais);
+                console.log("Produto prontos para envio:", Produtos);
                 if (CodigoPO) {
                     $.ajax({
-                        url: '../controller/ConcluirPoCompra.php',
+                        url: '../controller/ConcluirPoVenda.php',
                         method: 'POST',
                         data: {
                             CodigoPO: CodigoPO,
-                            Materiais: JSON.stringify(materiais),  // Passa os materiais corretamente aqui
+                            Produtos: JSON.stringify(Produtos),  // Passa os materiais corretamente aqui
                             Status: status
                         },
                         success: function(response) {
                             console.log('Requisição AJAX bem sucedida:', response);
-                            alert("Solicitação de compra adicionada com sucesso!");
-                            window.location.href = "../view/SolicitacaoCompra.php";
+                            alert("Solicitação de venda entregada com sucesso!");
+                            window.location.href = "../view/SolicitacaoVenda.php";
                         },
                         error: function(xhr, status, error) {
                             console.error('Erro na requisição AJAX:', error);
                         }
                     });
                 } else {
-                    alert('Por favor, digite o código do material.');
+                    alert('Por favor, digite o código da SDV.');
                 }
             },
             error: function(xhr, status, error) {
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    **/
+    
     
 
     btnEditar.addEventListener('click', function() {

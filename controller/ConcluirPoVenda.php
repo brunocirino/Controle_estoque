@@ -7,17 +7,17 @@ $resultado = false;
 
 $id_identificador = $_POST['CodigoPO'];
 $Status = $_POST['Status'];
-$materiais = isset($_POST['Materiais']) ? json_decode($_POST['Materiais'], true) : [];
+$Produtos = isset($_POST['Produtos']) ? json_decode($_POST['Produtos'], true) : [];
 
 $debug_info = [
     'id_identificador' => $id_identificador,
     'Status' => $Status,
-    'Materiais' => $materiais
+    'Produtos' => $Produtos
 ];
 
-$SolicitacaoCompraDAO = new SolicitacaoCompraDAO();
+$SolicitacaoVendaDAO = new SolicitacaoVendaDAO();
 
-$resultado = $SolicitacaoCompraDAO->Concluir($id_identificador, $materiais, $Status);
+$resultado = $SolicitacaoVendaDAO->Entregar($id_identificador, $Produtos, $Status);
 
 echo json_encode([
     'debug' => $debug_info,  
