@@ -25,6 +25,6 @@ $resultado = $SolicitacaoCompraDAO->Concluir($id_identificador, $materiais, $Sta
 
 // Retorna os valores das variáveis e o resultado para depuração
 echo json_encode([
-    'debug' => $debug_info,   // Adiciona os valores das variáveis
-    'resultado' => $resultado // Retorna o resultado da função Concluir
+    'debug' => $debug_info,   
+    'resultado' => $resultado 
 ]);

@@ -155,22 +155,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
 
-                    // IDs e quantidades dos materiais retornados na resposta da consulta
-                    var idsMateriaisSelecionados = detalhes.map(material => material.id_mat);
+                    var idsMateriaisSelecionados = detalhes.map(material => material.id_mat.toString());
                     var quantidadesMateriais = detalhes.map(material => material.qtdMat);
+
+
+                    console.log(idsMateriaisSelecionados, quantidadesMateriais)
 
                     // Marca as opções selecionadas com base nos IDs de materiais retornados
                     for (var i = 0; i < campoMateriais.options.length; i++) {
                         var option = campoMateriais.options[i];
-                        if (idsMateriaisSelecionados.includes(option.value)) {
+                        console.log(option, option.value)
+                        if (idsMateriaisSelecionados.includes(option.value.toString())) {
                             option.selected = true;
+                            console.log(option.selected)
                         }
                     }
 
                     // Chama a função de evento manualmente para exibir os campos de quantidade já selecionados
                     document.getElementById('edit-materiais').dispatchEvent(new Event('change'));
-
-                    // Definir as quantidades nos campos após a geração
                  
 
                     idsMateriaisSelecionados.forEach((materialId, index) => {

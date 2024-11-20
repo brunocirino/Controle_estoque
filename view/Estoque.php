@@ -90,9 +90,10 @@
                     <input type="text" class="product-id" placeholder="Digite o ID do produto" required id="product-id">
                 </div>
                 <div class="titulo">
-                <h1>Tabela de produtos</h1>
+                <h1>Estoque</h1>
                 </div>
                 <div class="row-buttons">
+                    <button id="btn-devolucao">Devolução</button>
                     <button id="btn-baixa">Perda</button>
                     <button id="btn-entrada">Entrada</button>
                 </div>

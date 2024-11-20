@@ -57,8 +57,7 @@
         
             $delete->execute($codigoUser);
         
-            // Verifica se alguma linha foi afetada
-            return $delete->rowCount() > 0;  // Retorna true se um usuário foi excluído, false caso contrário
+            return $delete->rowCount() > 0;  
         }
         
         

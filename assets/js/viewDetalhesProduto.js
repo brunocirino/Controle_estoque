@@ -1,18 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        var linhas = document.querySelectorAll('tbody tr'); // Seleciona todas as linhas dentro do tbody
+    var tabela = document.querySelector('tbody');
 
-        if (linhas.length === 0) {
-            console.warn('Nenhuma linha encontrada na tabela.');
+    tabela.addEventListener('dblclick', function(event) {
+        var linha = event.target.closest('tr');
+        if (linha) {
+            var codigo = linha.cells[0].textContent.trim(); 
+            abrirModalDetalhes(codigo);
         }
-
-        linhas.forEach(function(linha) {
-            linha.addEventListener('dblclick', function() {
-                var codigo = this.cells[0].textContent; // Obtém o código da primeira célula da linha clicada
-                abrirModalDetalhes(codigo);
-            });
-        });
-    }, 100); // Atraso de 100ms
+    });
 
     function abrirModalDetalhes(codigo) {
         $.ajax({

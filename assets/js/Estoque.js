@@ -3,21 +3,28 @@ document.addEventListener('DOMContentLoaded', function() {
     var btnbaixa = document.getElementById('btn-baixa');
     var spanClose = document.getElementsByClassName('close')[0];
     var btnentrada = document.getElementById('btn-entrada');
+    var btnDevolucao = document.getElementById('btn-devolucao');
     var Titulo = document.getElementById('modal-title');
     var btnSalvar = document.getElementById('btn-salvar');
-    var isEntradaMode;
+    var isDevolucaoMode;
 
     btnentrada.addEventListener('click', function() {
         modal.style.display = 'block';
         Titulo.textContent = "Entrada";
-        isEntradaMode = true;
+        isDevolucaoMode = true;
     });
 
     btnbaixa.addEventListener('click', function() {
         isEditMode = false;  // Definir modo de adição
         modal.style.display = 'block';
         Titulo.textContent = "Baixa";
-        isEntradaMode = false;
+        isDevolucaoMode = true;
+    });
+
+    btnDevolucao.addEventListener('click', function() {
+        modal.style.display = 'block';
+        Titulo.textContent = "Entrada";
+        isDevolucaoMode = false;
     });
 
 
@@ -25,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault(); // Agora o evento é capturado corretamente
         var Quantidade = document.getElementById('edit-quantidade').value;
         var id_identificador = document.getElementById('product-id').value;
-        console.log(isEntradaMode);
+        console.log(isDevolucaoMode);
     
         $.ajax({
             url: '../controller/Estoque.php',
             method: 'POST',
-            data: { quantidade: Quantidade, id_identificador: id_identificador, Entrada: isEntradaMode },
+            data: { quantidade: Quantidade, id_identificador: id_identificador, Entrada: isDevolucaoMode },
             success: function(response) {
                 try {
                     // Tenta fazer o parse da resposta como JSON
@@ -50,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 alert(aviso); // Exibe cada aviso
                             });
                         }
-                        if(isEntradaMode){
+                        if(isDevolucaoMode){
                             alert('Entrada realizada com sucesso!');
                         } else {
                             alert('Perda realizada com sucesso!');

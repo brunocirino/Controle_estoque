@@ -21,6 +21,8 @@ try {
     $Status = $_POST['Status'];
     $materiais = isset($_POST['Materiais']) ? json_decode($_POST['Materiais'], true) : [];
 
+    logError("Materiais: $materiais[0]");
+    logError("Fornecedores: $Fornecedores[0]");
 
     foreach ($materiais as $index =>$material) {
         $Valor_total = 0;

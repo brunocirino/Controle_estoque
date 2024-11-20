@@ -45,7 +45,7 @@ require_once("UserDAO.php");
 
         public function ConsultarPoCompra($codPO){
             $consulta = $this->banco->prepare('SELECT 
-                p.Titulo, p.id_identificador, p.status, p.NR_NF, p.Prioridade, p.id_mat, p.id_forn, p.preco_unit, p.preco_total, f.nomeFantasia, m.nomeMat, p.qtdMat, 
+                p.Titulo, p.id_identificador, p.status, p.NR_NF, p.Prioridade, GROUP_CONCAT(DISTINCT f.nomeFantasia) as nomes_Fantasias, p.id_mat, p.id_forn, p.preco_unit, p.preco_total, f.nomeFantasia, m.nomeMat, p.qtdMat, 
                 SUM(p.preco_total) OVER() AS total_preco
                 FROM pedidocompra p
                 JOIN fornecedores f ON p.id_forn = f.id

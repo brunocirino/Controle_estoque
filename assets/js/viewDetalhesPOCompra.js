@@ -1,18 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        var linhas = document.querySelectorAll('tbody tr'); // Seleciona todas as linhas dentro do tbody
+    
+    var tabela = document.querySelector('tbody');
 
-        if (linhas.length === 0) {
-            console.warn('Nenhuma linha encontrada na tabela.');
+    tabela.addEventListener('dblclick', function(event) {
+        var linha = event.target.closest('tr');
+        if (linha) {
+            var codigo = linha.cells[0].textContent.trim(); 
+            abrirModalDetalhes(codigo);
         }
-
-        linhas.forEach(function(linha) {
-            linha.addEventListener('dblclick', function() {
-                var codigo = this.cells[0].textContent; // Obtém o código da primeira célula da linha clicada
-                abrirModalDetalhes(codigo);
-            });
-        });
-    }, 100); // Atraso de 100ms
+    });
 
     function abrirModalDetalhes(codigo) {
         $.ajax({
@@ -26,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Preencha o modal com os detalhes recebidos
                 document.getElementById('view-Codigo').value = detalhes[0].id_identificador; 
                 document.getElementById('view-titulo').value = detalhes[0].Titulo;
-                document.getElementById('view-Fornecedor').value = detalhes[0].nomeFantasia; 
+                document.getElementById('view-Fornecedor').value = detalhes[0].nomes_Fantasias; 
                 document.getElementById('view-preco-total').value = detalhes[0].total_preco;
                 document.getElementById('view-prioridade').value = detalhes[0].Prioridade;
                 document.getElementById('view-status').value = detalhes[0].status;
